@@ -1,0 +1,1548 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Alpha Radar — Trend Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  /* ─── Reset & Variables ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #080B12;
+    --surface:   #0D1220;
+    --surface2:  #111827;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.12);
+    --green:     #00FFA3;
+    --green-dim: rgba(0,255,163,0.12);
+    --amber:     #FFB547;
+    --amber-dim: rgba(255,181,71,0.12);
+    --red:       #FF5C5C;
+    --red-dim:   rgba(255,92,92,0.12);
+    --blue:      #60A5FA;
+    --blue-dim:  rgba(96,165,250,0.10);
+    --purple:    #A78BFA;
+    --purple-dim:rgba(167,139,250,0.10);
+    --text:      #E8EDF5;
+    --text-dim:  #8896AA;
+    --text-faint:#4A5568;
+    --radius:    12px;
+    --mono:      'Space Mono', monospace;
+    --display:   'Syne', sans-serif;
+    --body:      'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,163,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,163,0.018) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 240px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+  }
+
+  .logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--green);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .logo-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3));
+  }
+
+  .logo-text {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .nav {
+    flex: 1;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-dim);
+    border: 1px solid transparent;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+  }
+
+  .nav-item.active {
+    background: var(--green-dim);
+    border-color: rgba(0,255,163,0.2);
+    color: var(--green);
+  }
+
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 20px;
+  }
+
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    background: rgba(8,11,18,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 50;
+  }
+
+  .page-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 17px;
+    flex: 1;
+  }
+
+  .scan-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--green);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+
+  .scan-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .timestamp {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+  }
+
+  .content {
+    padding: 28px;
+    flex: 1;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .stat-card.green::before { background: var(--green); }
+  .stat-card.amber::before { background: var(--amber); }
+  .stat-card.blue::before  { background: var(--blue); }
+  .stat-card.purple::before { background: var(--purple); }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-card.green .stat-value { color: var(--green); }
+  .stat-card.amber .stat-value { color: var(--amber); }
+  .stat-card.blue .stat-value  { color: var(--blue); }
+  .stat-card.purple .stat-value { color: var(--purple); }
+
+  .stat-change {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    flex: 1;
+  }
+
+  .section-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+  }
+
+  .trends-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .trend-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .trend-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .trend-card.selected {
+    border-color: var(--green);
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(0,255,163,0.04) 100%);
+  }
+
+  .trend-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .signal-score {
+    min-width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .signal-score.high   { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,255,163,0.25); }
+  .signal-score.medium { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(255,181,71,0.25); }
+  .signal-score.low    { background: var(--blue-dim);  color: var(--blue);  border: 1px solid rgba(96,165,250,0.25); }
+
+  .trend-meta { flex: 1 }
+
+  .trend-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .trend-category {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .momentum-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+
+  .momentum-badge.surging  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(0,255,163,0.3); }
+  .momentum-badge.rising   { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(255,181,71,0.3); }
+  .momentum-badge.stable   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(96,165,250,0.3); }
+  .momentum-badge.breaking { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,92,92,0.3); }
+
+  .trend-summary {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .trend-signals {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .signal-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-faint);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .trend-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stat-mini {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .stat-mini.neutral { color: var(--text-dim); }
+
+  .divider-dot {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--text-faint);
+  }
+
+  .alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .alert-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: all 0.15s;
+  }
+
+  .alert-card:hover { border-color: var(--border2); }
+
+  .alert-severity {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .alert-severity.critical { background: var(--red);    box-shadow: 0 0 10px var(--red); }
+  .alert-severity.high     { background: var(--amber);  box-shadow: 0 0 10px var(--amber); }
+  .alert-severity.medium   { background: var(--blue);   box-shadow: 0 0 8px var(--blue); }
+  .alert-severity.low      { background: var(--text-faint); }
+
+  .alert-body { flex: 1 }
+
+  .alert-title {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13.5px;
+    margin-bottom: 4px;
+  }
+
+  .alert-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .alert-action {
+    font-size: 11px;
+    color: var(--green);
+    font-style: italic;
+  }
+
+  .alert-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+
+  .alert-type-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+  }
+
+  .alert-time {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-faint);
+    margin-left: auto;
+  }
+
+  .content-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 24px;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    flex: 1;
+  }
+
+  .tab-row {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--surface2);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--text-dim);
+    border: none;
+    background: none;
+    transition: all 0.15s;
+  }
+
+  .tab.active {
+    background: var(--green);
+    color: #000;
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .tweet-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .tweet-type {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+
+  .tweet-type.alpha        { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(0,255,163,0.2); }
+  .tweet-type.educational  { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(96,165,250,0.2); }
+  .tweet-type.contrarian   { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,92,92,0.2); }
+  .tweet-type.viral        { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+
+  .tweet-hook {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .tweet-body {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover { border-color: var(--green); color: var(--green); }
+
+  .thread-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .thread-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .thread-outline {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .thread-point {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .thread-num {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid rgba(0,255,163,0.2);
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .thread-text {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .hook-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .hook-item:hover { border-color: var(--green); }
+
+  .hook-arrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+
+  .hook-text {
+    font-size: 13px;
+    color: var(--text);
+    font-style: italic;
+    flex: 1;
+  }
+
+  .pulse-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .pulse-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .pulse-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+
+  .sentiment-bar {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+
+  .sentiment-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--red), var(--amber), var(--green));
+    transition: width 1s ease;
+  }
+
+  .ecosystem-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .eco-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .eco-name {
+    font-weight: 500;
+    font-size: 12.5px;
+    flex: 1;
+  }
+
+  .eco-momentum { font-family: var(--mono); font-size: 10px; }
+  .eco-momentum.up   { color: var(--green); }
+  .eco-momentum.down { color: var(--red); }
+  .eco-momentum.stable { color: var(--text-dim); }
+
+  .deep-dive-input {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .search-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 11px 16px;
+    font-family: var(--body);
+    font-size: 13.5px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-input:focus { border-color: var(--green); }
+  .search-input::placeholder { color: var(--text-faint); }
+
+  .dive-btn {
+    padding: 11px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .dive-btn:hover { border-color: var(--green); color: var(--green); }
+
+  .research-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+
+  .research-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .research-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .research-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+
+  .research-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .key-player {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .key-player:last-child { border-bottom: none; }
+
+  .player-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .player-name { font-weight: 600; font-size: 12.5px; color: var(--text); }
+  .player-role { font-size: 11.5px; color: var(--text-dim); }
+
+  .loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    gap: 16px;
+    color: var(--text-dim);
+  }
+
+  .spinner {
+    width: 36px; height: 36px;
+    border: 2px solid var(--border);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loader-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 1px;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .error-msg {
+    background: var(--red-dim);
+    border: 1px solid rgba(255,92,92,0.25);
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: var(--red);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+  .fade-in { animation: fadeIn 0.4s ease forwards; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .score-bar-wrap {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--amber), var(--green));
+  }
+
+  .verified { color: var(--blue); font-size: 10px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <nav class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">
+        <div class="logo-icon">📡</div>
+        <div class="logo-text">Alpha Radar</div>
+      </div>
+      <div class="logo-sub">Web3 Intelligence</div>
+    </div>
+
+    <div class="nav">
+      <button class="nav-item active" onclick="navigate('dashboard')">
+        <span class="nav-icon">◈</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="navigate('trends')">
+        <span class="nav-icon">⬡</span> Trends
+      </button>
+      <button class="nav-item" onclick="navigate('alerts')">
+        <span class="nav-icon">⚡</span> Alerts
+        <span class="nav-badge" id="alert-count">—</span>
+      </button>
+      <button class="nav-item" onclick="navigate('content')">
+        <span class="nav-icon">✦</span> Content Ideas
+      </button>
+      <button class="nav-item" onclick="navigate('pulse')">
+        <span class="nav-icon">◎</span> Ecosystem Pulse
+      </button>
+      <button class="nav-item" onclick="navigate('deepdive')">
+        <span class="nav-icon">⊕</span> Deep Dive
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span>LIVE SCANNING</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="timestamp" id="top-timestamp">—</div>
+      <button class="scan-btn" id="scan-btn" onclick="handleScan()">
+        ◈ Scan Now
+      </button>
+    </div>
+
+    <div class="content">
+
+      <div class="view active" id="view-dashboard">
+        <div class="stats-row">
+          <div class="stat-card green">
+            <div class="stat-label">Active Narratives</div>
+            <div class="stat-value" id="stat-narratives">—</div>
+            <div class="stat-change">Detected this scan</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-label">Avg Signal Score</div>
+            <div class="stat-value" id="stat-avg-score">—</div>
+            <div class="stat-change">Across all trends</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-label">Surging Trends</div>
+            <div class="stat-value" id="stat-surging">—</div>
+            <div class="stat-change">High momentum</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-label">Active Alerts</div>
+            <div class="stat-value" id="stat-alerts">—</div>
+            <div class="stat-change">Requires attention</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">Top Narratives</div>
+          <div class="section-badge">Ranked by Signal Score</div>
+        </div>
+
+        <div id="dashboard-trends">
+          <div class="loader">
+            <div class="spinner"></div>
+            <div class="loader-text">SCANNING WEB3 ECOSYSTEM...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="view-trends">
+        <div class="section-header">
+          <div class="section-title">All Detected Narratives</div>
+          <div class="section-badge" id="trends-count-badge">Loading...</div>
+        </div>
+        <div id="trends-grid">
+          <div class="loader">
+            <div class="spinner"></div>
+            <div class="loader-text">LOADING TRENDS...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="view-alerts">
+        <div class="section-header">
+          <div class="section-title">Alpha Alerts</div>
+          <div class="section-badge">Real-time Signals</div>
+        </div>
+        <div id="alerts-list">
+          <div class="loader">
+            <div class="spinner"></div>
+            <div class="loader-text">FETCHING ALERTS...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="view-content">
+        <div class="section-header">
+          <div class="section-title">Content Idea Generator</div>
+          <div class="section-badge">Select a trend to generate</div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <p style="color:var(--text-dim); font-size:13px; margin-bottom:14px;">
+            Select a narrative below to instantly generate tweets, threads, hooks, and content angles.
+          </p>
+          <div id="content-trend-selector">
+            <div class="loader">
+              <div class="spinner"></div>
+              <div class="loader-text">LOADING TRENDS...</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="content-ideas-output">
+          <div class="empty-state">← SELECT A NARRATIVE TO GENERATE IDEAS</div>
+        </div>
+      </div>
+
+      <div class="view" id="view-pulse">
+        <div class="section-header">
+          <div class="section-title">Ecosystem Pulse</div>
+          <div class="section-badge">Market Intelligence</div>
+        </div>
+        <div id="pulse-content">
+          <div class="loader">
+            <div class="spinner"></div>
+            <div class="loader-text">READING ECOSYSTEM...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="view-deepdive">
+        <div class="section-header">
+          <div class="section-title">Deep Dive Research</div>
+          <div class="section-badge">AI-Powered Analysis</div>
+        </div>
+
+        <div class="deep-dive-input">
+          <input
+            type="text"
+            class="search-input"
+            id="dive-input"
+            placeholder="Enter a topic, protocol, or narrative to research..."
+            onkeydown="if(event.key==='Enter') startDeepDive()"
+          >
+          <button class="dive-btn" onclick="startDeepDive()">⊕ Deep Dive</button>
+        </div>
+
+        <div id="dive-result">
+          <div class="empty-state">ENTER A TOPIC ABOVE TO BEGIN RESEARCH</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:3001/api';
+let state = {
+  trends: [],
+  alerts: [],
+  pulse: null,
+  selectedTrend: null,
+  currentView: 'dashboard',
+  lastScan: null,
+};
+
+function navigate(view) {
+  state.currentView = view;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  const titles = { dashboard:'Dashboard', trends:'Trend Scanner', alerts:'Alpha Alerts', content:'Content Ideas', pulse:'Ecosystem Pulse', deepdive:'Deep Dive Research' };
+  document.getElementById('page-title').textContent = titles[view] || view;
+  if (view === 'alerts' && state.alerts.length === 0) loadAlerts();
+  if (view === 'pulse' && !state.pulse) loadPulse();
+  if (view === 'content' && state.trends.length === 0) loadTrends();
+  if (view === 'trends' && state.trends.length === 0) loadTrends();
+}
+
+async function handleScan() {
+  const btn = document.getElementById('scan-btn');
+  btn.disabled = true;
+  btn.textContent = '◌ Scanning...';
+  state.trends = []; state.alerts = []; state.pulse = null;
+  await loadTrends();
+  btn.disabled = false;
+  btn.textContent = '◈ Scan Now';
+}
+
+async function loadTrends() {
+  setLoading('dashboard-trends');
+  setLoading('trends-grid');
+  try {
+    const res = await fetch(`${API}/trends`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    state.trends = data.trends || [];
+    state.lastScan = new Date();
+    renderDashboard(); renderTrends(); renderContentSelector(); updateTimestamp();
+  } catch(e) {
+    showError('dashboard-trends', e.message);
+    showError('trends-grid', e.message);
+  }
+}
+
+async function loadAlerts() {
+  setLoading('alerts-list');
+  try {
+    const res = await fetch(`${API}/alerts`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    state.alerts = data.alerts || [];
+    renderAlerts();
+    const count = state.alerts.filter(a => a.severity === 'critical' || a.severity === 'high').length;
+    document.getElementById('alert-count').textContent = count || '—';
+    document.getElementById('stat-alerts').textContent = state.alerts.length;
+  } catch(e) { showError('alerts-list', e.message); }
+}
+
+async function loadPulse() {
+  setLoading('pulse-content');
+  try {
+    const res = await fetch(`${API}/ecosystem-pulse`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    state.pulse = data.pulse;
+    renderPulse();
+  } catch(e) { showError('pulse-content', e.message); }
+}
+
+async function generateContentIdeas(trend) {
+  state.selectedTrend = trend;
+  document.querySelectorAll('.trend-selector-item').forEach(el => {
+    el.classList.toggle('selected', el.dataset.id === trend.id);
+  });
+  const out = document.getElementById('content-ideas-output');
+  out.innerHTML = `<div class="loader"><div class="spinner"></div><div class="loader-text">GENERATING CONTENT IDEAS...</div></div>`;
+  try {
+    const res = await fetch(`${API}/content-ideas`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ trend }) });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    renderContentIdeas(data.ideas, trend);
+  } catch(e) { out.innerHTML = `<div class="error-msg">Failed to generate: ${e.message}</div>`; }
+}
+
+async function startDeepDive() {
+  const topic = document.getElementById('dive-input').value.trim();
+  if (!topic) return;
+  const out = document.getElementById('dive-result');
+  out.innerHTML = `<div class="loader"><div class="spinner"></div><div class="loader-text">RESEARCHING "${topic.toUpperCase()}"...</div></div>`;
+  try {
+    const res = await fetch(`${API}/deep-dive`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topic }) });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    renderDeepDive(data.research, topic);
+  } catch(e) { out.innerHTML = `<div class="error-msg">Research failed: ${e.message}</div>`; }
+}
+
+function renderDashboard() {
+  const trends = state.trends;
+  if (!trends.length) return;
+  const avg = Math.round(trends.reduce((s,t) => s+(t.signalScore||0),0)/trends.length);
+  const surging = trends.filter(t => t.momentum==='surging'||t.momentum==='breaking').length;
+  document.getElementById('stat-narratives').textContent = trends.length;
+  document.getElementById('stat-avg-score').textContent = avg;
+  document.getElementById('stat-surging').textContent = surging;
+  const top = [...trends].sort((a,b)=>(b.signalScore||0)-(a.signalScore||0)).slice(0,4);
+  document.getElementById('dashboard-trends').innerHTML = `<div class="trends-grid fade-in">${top.map(renderTrendCard).join('')}</div>`;
+}
+
+function renderTrends() {
+  const trends = state.trends;
+  document.getElementById('trends-count-badge').textContent = `${trends.length} Narratives`;
+  const container = document.getElementById('trends-grid');
+  if (!trends.length) { container.innerHTML = '<div class="empty-state">NO TRENDS LOADED</div>'; return; }
+  container.innerHTML = `<div class="trends-grid fade-in">${trends.map(renderTrendCard).join('')}</div>`;
+}
+
+function renderTrendCard(t) {
+  const score = t.signalScore||0;
+  const scoreClass = score>=85?'high':score>=70?'medium':'low';
+  const tags = (t.tags||[]).slice(0,4).map(tag=>`<span class="signal-tag">${tag}</span>`).join('');
+  const devColor = {'very high':'var(--green)','high':'var(--amber)','medium':'var(--blue)','low':'var(--text-faint)'}[t.devActivity]||'var(--text-faint)';
+  return `
+  <div class="trend-card" onclick="openTrendDetail('${t.id}')">
+    <div class="trend-header">
+      <div class="signal-score ${scoreClass}">${score}</div>
+      <div class="trend-meta">
+        <div class="trend-title">${t.title||'Unknown'}</div>
+        <div class="trend-category">${t.category||''} · ${t.timeframe||''}</div>
+      </div>
+      <span class="momentum-badge ${t.momentum||'stable'}">${t.momentum||'stable'}</span>
+    </div>
+    <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${score}%"></div></div>
+    <p class="trend-summary" style="margin-top:12px">${t.summary||''}</p>
+    <div class="trend-signals">${tags}</div>
+    <div class="trend-footer">
+      <span class="stat-mini">↑ ${t.mentionGrowth||'?%'}</span>
+      <span class="divider-dot"></span>
+      <span class="stat-mini neutral">DEV: <span style="color:${devColor}">${t.devActivity||'?'}</span></span>
+      ${t.fundingSignal?'<span class="divider-dot"></span><span class="stat-mini">💰 Funding</span>':''}
+    </div>
+  </div>`;
+}
+
+function renderAlerts() {
+  const alerts = state.alerts;
+  const container = document.getElementById('alerts-list');
+  if (!alerts.length) { container.innerHTML = '<div class="empty-state">NO ALERTS</div>'; return; }
+  container.innerHTML = `<div class="alerts-list fade-in">
+  ${alerts.map(a=>`
+  <div class="alert-card">
+    <div class="alert-severity ${a.severity||'low'}"></div>
+    <div class="alert-body">
+      <div class="alert-title">${a.title||'Alert'}${a.verified?' <span class="verified">✓ Verified</span>':''}</div>
+      <div class="alert-desc">${a.description||''}</div>
+      ${a.actionable?`<div class="alert-action">→ ${a.actionable}</div>`:''}
+      <div class="alert-meta">
+        <span class="alert-type-badge">${a.type||''}</span>
+        <span class="alert-type-badge">${a.protocol||''}</span>
+        <span class="alert-type-badge">${a.ecosystem||''}</span>
+        <span class="alert-time">${a.timestamp||''}</span>
+      </div>
+    </div>
+  </div>`).join('')}
+  </div>`;
+}
+
+function renderContentSelector() {
+  const trends = state.trends;
+  const container = document.getElementById('content-trend-selector');
+  if (!trends.length) { container.innerHTML = '<div class="empty-state">NO TRENDS LOADED</div>'; return; }
+  container.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:4px;">
+  ${trends.map(t=>`
+  <div class="hook-item trend-selector-item" data-id="${t.id}" onclick='generateContentIdeas(${JSON.stringify(t)})'>
+    <div class="hook-arrow">→</div>
+    <div class="hook-text">${t.title}</div>
+    <span class="momentum-badge ${t.momentum||'stable'}" style="font-size:8px">${t.momentum||''}</span>
+    <span class="signal-score ${t.signalScore>=85?'high':t.signalScore>=70?'medium':'low'}" style="width:36px;height:28px;font-size:11px">${t.signalScore}</span>
+  </div>`).join('')}
+  </div>`;
+}
+
+function renderContentIdeas(ideas, trend) {
+  const out = document.getElementById('content-ideas-output');
+  const tweets = ideas.tweets||[], threads = ideas.threads||[], hooks = ideas.hooks||[], angles = ideas.angles||[];
+  out.innerHTML = `
+  <div class="content-panel fade-in">
+    <div class="panel-header">
+      <div class="panel-title">Ideas for: ${trend.title}</div>
+      <span class="momentum-badge ${trend.momentum||'stable'}">${trend.category}</span>
+    </div>
+    <div class="tab-row">
+      <button class="tab active" onclick="switchTab(event,'tab-tweets')">🐦 Tweets (${tweets.length})</button>
+      <button class="tab" onclick="switchTab(event,'tab-threads')">🧵 Threads (${threads.length})</button>
+      <button class="tab" onclick="switchTab(event,'tab-hooks')">🪝 Hooks (${hooks.length})</button>
+      <button class="tab" onclick="switchTab(event,'tab-angles')">📐 Angles (${angles.length})</button>
+    </div>
+    <div class="tab-content active" id="tab-tweets">
+      ${tweets.map(tw=>`
+      <div class="tweet-card">
+        <button class="copy-btn" onclick="copyText(this,'${encodeURIComponent(tw.body||'')}')">Copy</button>
+        <span class="tweet-type ${tw.type||'alpha'}">${tw.type||'alpha'}</span>
+        <div class="tweet-hook">${tw.hook||''}</div>
+        <div class="tweet-body">${tw.body||''}</div>
+      </div>`).join('')||'<div class="empty-state">No tweets generated</div>'}
+    </div>
+    <div class="tab-content" id="tab-threads">
+      ${threads.map(th=>`
+      <div class="thread-card">
+        <div class="thread-title">🧵 ${th.title||'Thread'} <span style="font-size:11px;color:var(--text-faint);font-weight:400;font-family:var(--mono)">· ${th.angle||''}</span></div>
+        <div class="thread-outline">
+          ${(th.outline||[]).map((pt,i)=>`
+          <div class="thread-point">
+            <div class="thread-num">${i+1}</div>
+            <div class="thread-text">${pt}</div>
+          </div>`).join('')}
+        </div>
+      </div>`).join('')||'<div class="empty-state">No threads generated</div>'}
+    </div>
+    <div class="tab-content" id="tab-hooks">
+      ${hooks.map(h=>`
+      <div class="hook-item" onclick="copyHook(this,'${encodeURIComponent(h)}')">
+        <div class="hook-arrow">↗</div>
+        <div class="hook-text">${h}</div>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--text-faint)">CLICK TO COPY</span>
+      </div>`).join('')||'<div class="empty-state">No hooks generated</div>'}
+    </div>
+    <div class="tab-content" id="tab-angles">
+      ${angles.map(a=>`
+      <div class="tweet-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div class="tweet-hook">${a.title||''}</div>
+          <span class="tweet-type alpha" style="margin:0">${a.platform||''}</span>
+        </div>
+        <div class="tweet-body">${a.description||''}</div>
+      </div>`).join('')||'<div class="empty-state">No angles generated</div>'}
+    </div>
+  </div>`;
+}
+
+function renderPulse() {
+  const p = state.pulse;
+  const container = document.getElementById('pulse-content');
+  if (!p) { container.innerHTML = '<div class="empty-state">NO PULSE DATA</div>'; return; }
+  const sentPct = p.sentimentScore||50;
+  const ecos = (p.topEcosystems||[]).slice(0,5);
+  const narratives = p.dominantNarratives||[];
+  const sentColor = sentPct>65?'var(--green)':sentPct>45?'var(--amber)':'var(--red)';
+  container.innerHTML = `
+  <div class="fade-in">
+    <div class="pulse-grid">
+      <div class="pulse-card">
+        <div class="pulse-label">Market Sentiment</div>
+        <div style="font-family:var(--display);font-size:22px;font-weight:800;color:${sentColor};margin-bottom:6px;text-transform:capitalize">${p.overallSentiment||'—'}</div>
+        <div class="sentiment-bar"><div class="sentiment-fill" style="width:${sentPct}%"></div></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim)">${sentPct}/100 Sentiment Score</div>
+      </div>
+      <div class="pulse-card">
+        <div class="pulse-label">Activity Levels</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+          <div class="eco-item"><span class="eco-name">Developer Activity</span><span class="eco-momentum up">${p.developerActivity||'—'}</span></div>
+          <div class="eco-item"><span class="eco-name">VC / Funding Activity</span><span class="eco-momentum up">${p.vcActivity||'—'}</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="pulse-grid">
+      <div class="pulse-card">
+        <div class="pulse-label">Top Ecosystems</div>
+        <div class="ecosystem-list">
+          ${ecos.map(e=>`
+          <div class="eco-item">
+            <span class="eco-name">${e.name||''}</span>
+            <span style="font-size:11px;color:var(--text-dim);flex:1">${e.activity||''}</span>
+            <span class="eco-momentum ${e.momentum||'stable'}">${e.momentum==='up'?'▲':e.momentum==='down'?'▼':'━'}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="pulse-card">
+        <div class="pulse-label">Dominant Narratives</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+          ${narratives.map((n,i)=>`
+          <div class="hook-item" style="cursor:default">
+            <div class="hook-arrow" style="color:var(--amber)">${i+1}.</div>
+            <div class="hook-text" style="font-size:13px">${n}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    ${p.marketContext?`<div class="pulse-card" style="margin-bottom:16px"><div class="pulse-label">Market Context</div><p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-top:4px">${p.marketContext}</p></div>`:''}
+    ${p.weeklyInsight?`<div class="pulse-card" style="border-color:rgba(0,255,163,0.2);background:linear-gradient(135deg,var(--surface),var(--green-dim))"><div class="pulse-label" style="color:var(--green)">💡 Weekly Insight</div><p style="font-size:13.5px;color:var(--text);line-height:1.7;margin-top:6px;font-style:italic">${p.weeklyInsight}</p></div>`:''}
+  </div>`;
+}
+
+function renderDeepDive(r, topic) {
+  const out = document.getElementById('dive-result');
+  const players=r.keyPlayers||[], developments=r.recentDevelopments||[], onchain=r.onChainSignals||[], opps=r.contentOpportunities||[], sources=r.sources||[];
+  out.innerHTML = `
+  <div class="research-panel fade-in">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--green);margin-bottom:4px">DEEP DIVE RESEARCH</div>
+        <div style="font-family:var(--display);font-weight:800;font-size:17px">${topic}</div>
+      </div>
+    </div>
+    <div class="research-section"><div class="research-label">Overview</div><p class="research-text">${r.overview||'—'}</p></div>
+    ${players.length?`<div class="research-section"><div class="research-label">Key Players</div>${players.map(kp=>`<div class="key-player"><div class="player-dot"></div><div><div class="player-name">${kp.name||''}</div><div class="player-role">${kp.role||''}</div></div></div>`).join('')}</div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)">
+      ${r.bullCase?`<div><div class="research-label" style="color:var(--green)">🟢 Bull Case</div><p class="research-text">${r.bullCase}</p></div>`:''}
+      ${r.bearCase?`<div><div class="research-label" style="color:var(--red)">🔴 Bear Case</div><p class="research-text">${r.bearCase}</p></div>`:''}
+    </div>
+    ${developments.length?`<div class="research-section"><div class="research-label">Recent Developments</div>${developments.map(d=>`<div class="hook-item" style="cursor:default;margin-bottom:6px"><div class="hook-arrow">→</div><div class="hook-text" style="font-size:12.5px">${d}</div></div>`).join('')}</div>`:''}
+    ${onchain.length?`<div class="research-section"><div class="research-label">On-Chain Signals</div>${onchain.map(s=>`<div style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:6px;font-size:12.5px;color:var(--text-dim)">${s}</div>`).join('')}</div>`:''}
+    ${opps.length?`<div class="research-section"><div class="research-label" style="color:var(--amber)">💡 Content Opportunities</div>${opps.map(o=>`<div class="hook-item" style="margin-bottom:6px"><div class="hook-arrow" style="color:var(--amber)">✦</div><div class="hook-text" style="font-size:12.5px">${o}</div></div>`).join('')}</div>`:''}
+    ${sources.length?`<div><div class="research-label">Sources</div><div style="display:flex;flex-wrap:wrap;gap:6px">${sources.map(s=>`<span class="signal-tag" style="font-size:11px">${s}</span>`).join('')}</div></div>`:''}
+  </div>`;
+}
+
+function setLoading(id) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = `<div class="loader"><div class="spinner"></div><div class="loader-text">LOADING...</div></div>`;
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = `<div class="error-msg">⚠ ${msg}<br><small style="opacity:0.7">Make sure the backend is running on port 3001</small></div>`;
+}
+
+function updateTimestamp() {
+  const ts = state.lastScan;
+  if (!ts) return;
+  document.getElementById('top-timestamp').textContent = `Last scan: ${ts.toLocaleTimeString()}`;
+}
+
+function switchTab(e, tabId) {
+  const panel = e.target.closest('.content-panel');
+  panel.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  panel.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+  panel.querySelector('#' + tabId).classList.add('active');
+}
+
+function copyText(btn, encoded) {
+  navigator.clipboard.writeText(decodeURIComponent(encoded)).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function copyHook(el, encoded) {
+  navigator.clipboard.writeText(decodeURIComponent(encoded)).then(() => {
+    el.style.borderColor = 'var(--green)';
+    setTimeout(() => el.style.borderColor = '', 1500);
+  });
+}
+
+function openTrendDetail(id) {
+  const trend = state.trends.find(t => t.id === id);
+  if (!trend) return;
+  document.querySelector('.nav-item:nth-child(4)').click();
+  setTimeout(() => generateContentIdeas(trend), 100);
+}
+
+loadTrends();
+loadAlerts();
+setInterval(() => { state.trends=[]; state.alerts=[]; loadTrends(); loadAlerts(); }, 5*60*1000);
+</script>
+</body>
+</html>
