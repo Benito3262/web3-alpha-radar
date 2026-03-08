@@ -548,7 +548,22 @@ let state = {
   activeTag: null, lastScan: null,
   writerFormat: 'tweet', writerTopic: ''
 };
+async function handleScan() {
+  try {
+    const res = await fetch(API + "/scan");
+    const data = await res.json();
 
+    state.trends = data.trends || [];
+    state.alerts = data.alerts || [];
+    state.lastScan = new Date();
+
+    renderTrends();
+    renderAlerts();
+
+  } catch (err) {
+    console.error("Scan failed:", err);
+  }
+}
 // ── Sidebar ───────────────────────────────────────────────────
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
