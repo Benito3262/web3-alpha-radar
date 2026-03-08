@@ -407,36 +407,3 @@ Return ONLY valid JSON:
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-```
-
-Save that. Now open `frontend/index.html` and find **only** the `filterAndNavigate` function and replace it:
-
-```javascript
-function filterAndNavigate(tag) {
-  state.activeTag = tag;
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  const trendsBtn = [...document.querySelectorAll('.nav-item')].find(el => el.textContent.trim().startsWith('Trends') || el.textContent.includes('Trend'));
-  if (trendsBtn) trendsBtn.classList.add('active');
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-trends').classList.add('active');
-  document.getElementById('page-title').textContent = 'Trend Scanner';
-  closeSidebar();
-  if (state.trends.length === 0) {
-    loadTrends().then(() => {
-      applyTagFilter(tag);
-    });
-  } else {
-    applyTagFilter(tag);
-  }
-}
-
-function applyTagFilter(tag) {
-  renderGlobalTags();
-  setTimeout(() => {
-    document.querySelectorAll('#global-tags .tag').forEach(el =>
-      el.classList.toggle('active', el.dataset.tag === tag));
-    const clearBtn = document.getElementById('clear-filter-btn');
-    if (clearBtn) clearBtn.classList.add('visible');
-    renderTrends();
-  }, 150);
-}
