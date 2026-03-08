@@ -1,0 +1,22 @@
+{
+  "name": "Web3 Alpha Radar",
+  "short_name": "Alpha Radar",
+  "description": "AI-powered Web3 trend intelligence",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080B12",
+  "theme_color": "#00FFA3",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/00FFA3/000000?text=AR",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/00FFA3/000000?text=AR",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
