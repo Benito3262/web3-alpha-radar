@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({
-  origin: ['https://web3-alpha-radar.vercel.app', 'http://localhost:3001'],
+  origin: ['https://web3-alpha-radar.vercel.app', 'http://localhost:3001', 'http://127.0.0.1:5500'],
   methods: ['GET', 'POST'],
   credentials: true
 }));
@@ -28,16 +28,17 @@ function parseJSON(raw) {
   return JSON.parse(cleaned);
 }
 
+// ── Health ──────────────────────────────────────────────────
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+// ── Trends ──────────────────────────────────────────────────
 app.get("/api/trends", async (req, res) => {
   try {
     if (isCacheValid()) {
       return res.json({ trends: cachedTrends, cached: true });
     }
-
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       max_tokens: 4000,
@@ -58,10 +59,12 @@ Return ONLY a valid JSON array with exactly 8 trend objects. Each object must ha
   "title": "Narrative Title",
   "category": "one of: DeFi | Layer2 | AI+Crypto | Infrastructure | NFT/Gaming | Bitcoin | Governance | Tooling",
   "summary": "2-3 sentence explanation of what this trend is and why it is gaining traction",
+  "detail": "4-5 sentence deeper explanation covering key projects, technical details, and ecosystem impact",
   "signalScore": number from 60-99,
   "momentum": "rising | surging | stable | breaking",
   "sources": ["source1", "source2", "source3"],
-  "tags": ["tag1", "tag2", "tag3"],
+  "tags": ["tag1", "tag2", "tag3", "tag4"],
+  "relatedProjects": ["project1", "project2", "project3"],
   "mentionGrowth": "+XX%",
   "devActivity": "low | medium | high | very high",
   "fundingSignal": true or false,
@@ -70,22 +73,63 @@ Return ONLY a valid JSON array with exactly 8 trend objects. Each object must ha
         },
       ],
     });
-
-    const text = response.choices[0].message.content;
-    const trends = parseJSON(text);
-    cachedTrends = trends;
+    const text = parseJSON(response.choices[0].message.content);
+    cachedTrends = text;
     cacheTimestamp = Date.now();
-    res.json({ trends, cached: false });
+    res.json({ trends: text, cached: false });
   } catch (err) {
     console.error("Trends error:", err);
     res.status(500).json({ error: "Failed to fetch trends", details: err.message });
   }
 });
 
+// ── Alerts ──────────────────────────────────────────────────
+app.get("/api/alerts", async (req, res) => {
+  try {
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      max_tokens: 2000,
+      messages: [
+        {
+          role: "system",
+          content: "You are a crypto alpha analyst. Always respond with valid JSON only, no markdown, no extra text.",
+        },
+        {
+          role: "user",
+          content: `Generate a realistic list of urgent crypto and Web3 alpha signals and alerts for early 2026. Include protocol launches, security incidents, partnerships, governance votes, whale movements, and funding announcements.
+
+Return ONLY a valid JSON array of 6 alert objects sorted by severity (critical first):
+[
+  {
+    "id": "alert-slug",
+    "title": "Alert title",
+    "description": "What happened and why it matters",
+    "severity": "critical | high | medium | low",
+    "type": "launch | exploit | partnership | governance | funding | whale | technical",
+    "protocol": "protocol or project name",
+    "ecosystem": "Ethereum | Solana | Bitcoin | Multi-chain | etc",
+    "timestamp": "2h ago",
+    "actionable": "What a creator or researcher should do with this info",
+    "tags": ["tag1", "tag2"],
+    "verified": true or false
+  }
+]`,
+        },
+      ],
+    });
+    const text = response.choices[0].message.content;
+    const alerts = parseJSON(text);
+    res.json({ alerts });
+  } catch (err) {
+    console.error("Alerts error:", err);
+    res.status(500).json({ error: "Failed to fetch alerts", details: err.message });
+  }
+});
+
+// ── Content Ideas ────────────────────────────────────────────
 app.post("/api/content-ideas", async (req, res) => {
   const { trend } = req.body;
   if (!trend) return res.status(400).json({ error: "trend is required" });
-
   try {
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -103,7 +147,7 @@ Title: ${trend.title}
 Category: ${trend.category}
 Summary: ${trend.summary}
 
-Return ONLY valid JSON with this structure:
+Return ONLY valid JSON:
 {
   "tweets": [
     { "hook": "compelling opening line", "body": "full tweet text under 280 chars", "type": "alpha | educational | contrarian | viral" }
@@ -121,7 +165,6 @@ Generate 3 tweets, 2 threads, 5 hooks, and 3 angles.`,
         },
       ],
     });
-
     const text = response.choices[0].message.content;
     const ideas = parseJSON(text);
     res.json({ ideas });
@@ -131,7 +174,26 @@ Generate 3 tweets, 2 threads, 5 hooks, and 3 angles.`,
   }
 });
 
-app.get("/api/alerts", async (req, res) => {
+// ── Write Full Post ──────────────────────────────────────────
+app.post("/api/write-post", async (req, res) => {
+  const { topic, format } = req.body;
+  if (!topic) return res.status(400).json({ error: "topic is required" });
+
+  const formatInstructions = {
+    tweet: "Write a single powerful tweet under 280 characters. Make it punchy, informative, and shareable. Include relevant hashtags at the end.",
+    thread: `Write a full Twitter/X thread with 8-10 tweets. 
+      Format as numbered tweets (1/, 2/, etc.). 
+      First tweet is the hook. Last tweet is the call to action.
+      Each tweet should be under 280 characters.
+      Make it educational, engaging, and shareable.`,
+    linkedin: `Write a full LinkedIn post. 
+      Start with a strong hook line.
+      Use short paragraphs and line breaks for readability.
+      Include key insights, data points if relevant, and end with a question to drive engagement.
+      Length: 150-300 words.
+      Professional but conversational tone.`,
+  };
+
   try {
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -139,44 +201,38 @@ app.get("/api/alerts", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: "You are a crypto alpha analyst. Always respond with valid JSON only, no markdown, no extra text.",
+          content: "You are an expert Web3 content writer who creates viral, engaging posts for crypto-native audiences. Always respond with valid JSON only, no markdown fences.",
         },
         {
           role: "user",
-          content: `Generate a realistic list of urgent crypto and Web3 alpha signals and alerts for early 2026. Include protocol launches, security incidents, partnerships, governance votes, whale movements, and funding announcements.
+          content: `Write a ${format} about this Web3 topic: "${topic}"
 
-Return ONLY a valid JSON array of 6 alert objects:
-[
-  {
-    "id": "alert-slug",
-    "title": "Alert title",
-    "description": "What happened and why it matters",
-    "severity": "critical | high | medium | low",
-    "type": "launch | exploit | partnership | governance | funding | whale | technical",
-    "protocol": "protocol or project name",
-    "ecosystem": "Ethereum | Solana | Bitcoin | Multi-chain | etc",
-    "timestamp": "2h ago",
-    "actionable": "What a creator or researcher should do with this info",
-    "verified": true or false
-  }
-]`,
+Instructions: ${formatInstructions[format] || formatInstructions.tweet}
+
+Return ONLY valid JSON:
+{
+  "title": "Short title describing the post",
+  "content": "The full written post content exactly as it should be published",
+  "hashtags": ["hashtag1", "hashtag2", "hashtag3"],
+  "tips": ["tip to improve engagement 1", "tip 2"],
+  "estimatedReach": "low | medium | high | viral"
+}`,
         },
       ],
     });
-
     const text = response.choices[0].message.content;
-    const alerts = parseJSON(text);
-    res.json({ alerts });
+    const post = parseJSON(text);
+    res.json({ post });
   } catch (err) {
-    console.error("Alerts error:", err);
-    res.status(500).json({ error: "Failed to fetch alerts", details: err.message });
+    console.error("Write post error:", err);
+    res.status(500).json({ error: "Failed to write post", details: err.message });
   }
 });
 
+// ── Deep Dive ────────────────────────────────────────────────
 app.post("/api/deep-dive", async (req, res) => {
   const { topic } = req.body;
   if (!topic) return res.status(400).json({ error: "topic is required" });
-
   try {
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -204,7 +260,6 @@ Return ONLY valid JSON:
         },
       ],
     });
-
     const text = response.choices[0].message.content;
     const research = parseJSON(text);
     res.json({ research });
@@ -214,6 +269,7 @@ Return ONLY valid JSON:
   }
 });
 
+// ── Ecosystem Pulse ──────────────────────────────────────────
 app.get("/api/ecosystem-pulse", async (req, res) => {
   try {
     const response = await groq.chat.completions.create({
@@ -242,7 +298,6 @@ Return ONLY valid JSON:
         },
       ],
     });
-
     const text = response.choices[0].message.content;
     const pulse = parseJSON(text);
     res.json({ pulse });
