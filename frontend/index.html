@@ -4,7 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web3 Alpha Radar — Trend Intelligence</title><meta name="theme-color" content="#080B12">
+<title>Web3 Alpha Radar — Trend Intelligence</title>
+<meta name="theme-color" content="#080B12">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Alpha Radar">
@@ -12,1213 +13,606 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-  /* ─── Reset & Variables ─────────────────────────────────────── */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg:        #080B12;
-    --surface:   #0D1220;
-    --surface2:  #111827;
-    --border:    rgba(255,255,255,0.07);
-    --border2:   rgba(255,255,255,0.12);
-    --green:     #00FFA3;
-    --green-dim: rgba(0,255,163,0.12);
-    --amber:     #FFB547;
-    --amber-dim: rgba(255,181,71,0.12);
-    --red:       #FF5C5C;
-    --red-dim:   rgba(255,92,92,0.12);
-    --blue:      #60A5FA;
-    --blue-dim:  rgba(96,165,250,0.10);
-    --purple:    #A78BFA;
-    --purple-dim:rgba(167,139,250,0.10);
-    --text:      #E8EDF5;
-    --text-dim:  #8896AA;
-    --text-faint:#4A5568;
-    --radius:    12px;
-    --mono:      'Space Mono', monospace;
-    --display:   'Syne', sans-serif;
-    --body:      'DM Sans', sans-serif;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--body);
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,255,163,0.018) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,163,0.018) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.03) 2px,
-      rgba(0,0,0,0.03) 4px
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .app {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-  .sidebar {
-    position: fixed;
-    left: 0; top: 0; bottom: 0;
-    width: 240px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    z-index: 100;
-  }
-
-  .logo {
-    padding: 24px 20px 20px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .logo-mark {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
-  }
-
-  .logo-icon {
-    width: 32px; height: 32px;
-    background: var(--green);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .logo-icon::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3));
-  }
-
-  .logo-text {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 15px;
-    color: var(--text);
-    letter-spacing: -0.3px;
-  }
-
-  .logo-sub {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--green);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    opacity: 0.8;
-  }
-
-  .nav {
-    flex: 1;
-    padding: 16px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.15s;
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--text-dim);
-    border: 1px solid transparent;
-    background: none;
-    width: 100%;
-    text-align: left;
-  }
-
-  .nav-item:hover {
-    background: rgba(255,255,255,0.04);
-    color: var(--text);
-  }
-
-  .nav-item.active {
-    background: var(--green-dim);
-    border-color: rgba(0,255,163,0.2);
-    color: var(--green);
-  }
-
-  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
-
-  .nav-badge {
-    margin-left: auto;
-    background: var(--red);
-    color: #000;
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 700;
-    padding: 2px 5px;
-    border-radius: 20px;
-  }
-
-  .sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid var(--border);
-  }
-
-  .status-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    padding: 8px 12px;
-    background: var(--surface2);
-    border-radius: 20px;
-    border: 1px solid var(--border);
-  }
-
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 8px var(--green);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(0.85); }
-  }
-
-  .main {
-    margin-left: 240px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .topbar {
-    position: sticky;
-    top: 0;
-    background: rgba(8,11,18,0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 28px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    z-index: 50;
-  }
-
-  .page-title {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 17px;
-    flex: 1;
-  }
-
-  .scan-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: var(--green);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.3px;
-  }
-
-  .scan-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-  .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  .timestamp {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-faint);
-  }
-
-  .content {
-    padding: 28px;
-    flex: 1;
-  }
-
-  .view { display: none; }
-  .view.active { display: block; }
-
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-
-  .stat-card.green::before { background: var(--green); }
-  .stat-card.amber::before { background: var(--amber); }
-  .stat-card.blue::before  { background: var(--blue); }
-  .stat-card.purple::before { background: var(--purple); }
-
-  .stat-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    margin-bottom: 8px;
-  }
-
-  .stat-value {
-    font-family: var(--display);
-    font-size: 28px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .stat-card.green .stat-value { color: var(--green); }
-  .stat-card.amber .stat-value { color: var(--amber); }
-  .stat-card.blue .stat-value  { color: var(--blue); }
-  .stat-card.purple .stat-value { color: var(--purple); }
-
-  .stat-change {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-  }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .section-title {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 15px;
-    flex: 1;
-  }
-
-  .section-badge {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid var(--border2);
-    color: var(--text-dim);
-  }
-
-  .trends-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-
-  .trend-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .trend-card:hover {
-    border-color: var(--border2);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  }
-
-  .trend-card.selected {
-    border-color: var(--green);
-    background: linear-gradient(135deg, var(--surface) 0%, rgba(0,255,163,0.04) 100%);
-  }
-
-  .trend-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .signal-score {
-    min-width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--mono);
-    font-weight: 700;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  .signal-score.high   { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,255,163,0.25); }
-  .signal-score.medium { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(255,181,71,0.25); }
-  .signal-score.low    { background: var(--blue-dim);  color: var(--blue);  border: 1px solid rgba(96,165,250,0.25); }
-
-  .trend-meta { flex: 1 }
-
-  .trend-title {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 1.3;
-    margin-bottom: 4px;
-  }
-
-  .trend-category {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-faint);
-  }
-
-  .momentum-badge {
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    flex-shrink: 0;
-  }
-
-  .momentum-badge.surging  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(0,255,163,0.3); }
-  .momentum-badge.rising   { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(255,181,71,0.3); }
-  .momentum-badge.stable   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(96,165,250,0.3); }
-  .momentum-badge.breaking { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,92,92,0.3); }
-
-  .trend-summary {
-    font-size: 12.5px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    margin-bottom: 14px;
-  }
-
-  .trend-signals {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
-  }
-
-  .signal-tag {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text-faint);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-
-  .trend-footer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .stat-mini {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--green);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .stat-mini.neutral { color: var(--text-dim); }
-
-  .divider-dot {
-    width: 3px; height: 3px;
-    border-radius: 50%;
-    background: var(--text-faint);
-  }
-
-  .alerts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .alert-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    transition: all 0.15s;
-  }
-
-  .alert-card:hover { border-color: var(--border2); }
-
-  .alert-severity {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-top: 5px;
-    flex-shrink: 0;
-  }
-
-  .alert-severity.critical { background: var(--red);    box-shadow: 0 0 10px var(--red); }
-  .alert-severity.high     { background: var(--amber);  box-shadow: 0 0 10px var(--amber); }
-  .alert-severity.medium   { background: var(--blue);   box-shadow: 0 0 8px var(--blue); }
-  .alert-severity.low      { background: var(--text-faint); }
-
-  .alert-body { flex: 1 }
-
-  .alert-title {
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: 13.5px;
-    margin-bottom: 4px;
-  }
-
-  .alert-desc {
-    font-size: 12px;
-    color: var(--text-dim);
-    line-height: 1.5;
-    margin-bottom: 8px;
-  }
-
-  .alert-action {
-    font-size: 11px;
-    color: var(--green);
-    font-style: italic;
-  }
-
-  .alert-meta {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-top: 6px;
-  }
-
-  .alert-type-badge {
-    font-family: var(--mono);
-    font-size: 9px;
-    padding: 2px 7px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    border: 1px solid var(--border2);
-    color: var(--text-dim);
-  }
-
-  .alert-time {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text-faint);
-    margin-left: auto;
-  }
-
-  .content-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-top: 24px;
-  }
-
-  .panel-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .panel-title {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 15px;
-    flex: 1;
-  }
-
-  .tab-row {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 20px;
-    background: var(--surface2);
-    padding: 4px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
-
-  .tab {
-    flex: 1;
-    padding: 7px 12px;
-    border-radius: 6px;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    color: var(--text-dim);
-    border: none;
-    background: none;
-    transition: all 0.15s;
-  }
-
-  .tab.active {
-    background: var(--green);
-    color: #000;
-  }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  .tweet-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 12px;
-    position: relative;
-  }
-
-  .tweet-type {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin-bottom: 8px;
-  }
-
-  .tweet-type.alpha        { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(0,255,163,0.2); }
-  .tweet-type.educational  { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(96,165,250,0.2); }
-  .tweet-type.contrarian   { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,92,92,0.2); }
-  .tweet-type.viral        { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
-
-  .tweet-hook {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 13px;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-
-  .tweet-body {
-    font-size: 12.5px;
-    color: var(--text-dim);
-    line-height: 1.6;
-  }
-
-  .copy-btn {
-    position: absolute;
-    top: 12px; right: 12px;
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .copy-btn:hover { border-color: var(--green); color: var(--green); }
-
-  .thread-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-
-  .thread-title {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 13px;
-    margin-bottom: 12px;
-    color: var(--text);
-  }
-
-  .thread-outline {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .thread-point {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-  }
-
-  .thread-num {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--green);
-    background: var(--green-dim);
-    border: 1px solid rgba(0,255,163,0.2);
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .thread-text {
-    font-size: 12.5px;
-    color: var(--text-dim);
-    line-height: 1.5;
-  }
-
-  .hook-item {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    padding: 12px 16px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 8px;
-    transition: all 0.15s;
-    cursor: pointer;
-  }
-
-  .hook-item:hover { border-color: var(--green); }
-
-  .hook-arrow {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--green);
-    flex-shrink: 0;
-  }
-
-  .hook-text {
-    font-size: 13px;
-    color: var(--text);
-    font-style: italic;
-    flex: 1;
-  }
-
-  .pulse-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .pulse-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-  }
-
-  .pulse-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text-faint);
-    margin-bottom: 8px;
-  }
-
-  .sentiment-bar {
-    height: 6px;
-    background: var(--surface2);
-    border-radius: 3px;
-    margin-bottom: 8px;
-    overflow: hidden;
-  }
-
-  .sentiment-fill {
-    height: 100%;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--red), var(--amber), var(--green));
-    transition: width 1s ease;
-  }
-
-  .ecosystem-list { display: flex; flex-direction: column; gap: 8px; }
-
-  .eco-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    background: var(--surface2);
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
-
-  .eco-name {
-    font-weight: 500;
-    font-size: 12.5px;
-    flex: 1;
-  }
-
-  .eco-momentum { font-family: var(--mono); font-size: 10px; }
-  .eco-momentum.up   { color: var(--green); }
-  .eco-momentum.down { color: var(--red); }
-  .eco-momentum.stable { color: var(--text-dim); }
-
-  .deep-dive-input {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .search-input {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    padding: 11px 16px;
-    font-family: var(--body);
-    font-size: 13.5px;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  .search-input:focus { border-color: var(--green); }
-  .search-input::placeholder { color: var(--text-faint); }
-
-  .dive-btn {
-    padding: 11px 20px;
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 12px;
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-
-  .dive-btn:hover { border-color: var(--green); color: var(--green); }
-
-  .research-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-  }
-
-  .research-section {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .research-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-  .research-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 8px;
-  }
-
-  .research-text {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.7;
-  }
-
-  .key-player {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .key-player:last-child { border-bottom: none; }
-
-  .player-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    margin-top: 7px;
-    flex-shrink: 0;
-  }
-
-  .player-name { font-weight: 600; font-size: 12.5px; color: var(--text); }
-  .player-role { font-size: 11.5px; color: var(--text-dim); }
-
-  .loader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 40px;
-    gap: 16px;
-    color: var(--text-dim);
-  }
-
-  .spinner {
-    width: 36px; height: 36px;
-    border: 2px solid var(--border);
-    border-top-color: var(--green);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .loader-text {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--green);
-    letter-spacing: 1px;
-    animation: blink 1.2s ease-in-out infinite;
-  }
-
-  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-  .error-msg {
-    background: var(--red-dim);
-    border: 1px solid rgba(255,92,92,0.25);
-    border-radius: 10px;
-    padding: 16px 20px;
-    color: var(--red);
-    font-size: 13px;
-    text-align: center;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 48px;
-    color: var(--text-faint);
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 1px;
-  }
-
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
-
-  .fade-in { animation: fadeIn 0.4s ease forwards; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .score-bar-wrap {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    margin-top: 6px;
-    overflow: hidden;
-  }
-
-  .score-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    background: linear-gradient(90deg, var(--amber), var(--green));
-  }
-
-  .verified { color: var(--blue); font-size: 10px; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #080B12;
+  --surface:    #0D1220;
+  --surface2:   #111827;
+  --border:     rgba(255,255,255,0.07);
+  --border2:    rgba(255,255,255,0.12);
+  --green:      #00FFA3;
+  --green-dim:  rgba(0,255,163,0.12);
+  --amber:      #FFB547;
+  --amber-dim:  rgba(255,181,71,0.12);
+  --red:        #FF5C5C;
+  --red-dim:    rgba(255,92,92,0.12);
+  --blue:       #60A5FA;
+  --blue-dim:   rgba(96,165,250,0.10);
+  --purple:     #A78BFA;
+  --purple-dim: rgba(167,139,250,0.10);
+  --text:       #E8EDF5;
+  --text-dim:   #8896AA;
+  --text-faint: #4A5568;
+  --radius:     12px;
+  --sidebar-w:  240px;
+  --mono:       'Space Mono', monospace;
+  --display:    'Syne', sans-serif;
+  --body:       'DM Sans', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,163,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,163,0.018) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100vh;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 90;
+  backdrop-filter: blur(2px);
+}
+.overlay.active { display: block; }
+
+.sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.logo { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.logo-mark { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.logo-icon { width: 32px; height: 32px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.logo-text { font-family: var(--display); font-weight: 800; font-size: 15px; color: var(--text); }
+.logo-sub { font-family: var(--mono); font-size: 9px; color: var(--green); letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; }
+
+.nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px; cursor: pointer;
+  transition: all 0.15s; font-size: 13.5px; font-weight: 500;
+  color: var(--text-dim); border: 1px solid transparent;
+  background: none; width: 100%; text-align: left; min-height: 44px;
+}
+.nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+.nav-item.active { background: var(--green-dim); border-color: rgba(0,255,163,0.2); color: var(--green); }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+
+.nav-badge {
+  margin-left: auto; background: var(--red); color: #000;
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  padding: 2px 6px; border-radius: 20px; min-width: 20px; text-align: center;
+}
+
+.sidebar-footer { padding: 16px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.status-pill { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; color: var(--text-dim); padding: 8px 12px; background: var(--surface2); border-radius: 20px; border: 1px solid var(--border); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
+
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.85)} }
+
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+.topbar {
+  position: sticky; top: 0;
+  background: rgba(8,11,18,0.9); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px; display: flex; align-items: center; gap: 12px; z-index: 50;
+}
+
+.burger-btn {
+  display: none; background: none; border: 1px solid var(--border2);
+  border-radius: 8px; padding: 8px; cursor: pointer; color: var(--text);
+  font-size: 18px; min-width: 40px; min-height: 40px;
+  align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.page-title { font-family: var(--display); font-weight: 700; font-size: 17px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.timestamp { font-family: var(--mono); font-size: 10px; color: var(--text-faint); white-space: nowrap; display: none; }
+
+.scan-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px; background: var(--green); color: #000;
+  border: none; border-radius: 8px; font-family: var(--display);
+  font-weight: 700; font-size: 12px; cursor: pointer;
+  transition: all 0.15s; white-space: nowrap; min-height: 40px; flex-shrink: 0;
+}
+.scan-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.scan-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.content { padding: 24px; flex: 1; }
+.view { display: none; }
+.view.active { display: block; }
+
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; position: relative; overflow: hidden; }
+.stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.stat-card.green::before  { background: var(--green); }
+.stat-card.amber::before  { background: var(--amber); }
+.stat-card.blue::before   { background: var(--blue); }
+.stat-card.purple::before { background: var(--purple); }
+
+.stat-label { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
+.stat-value { font-family: var(--display); font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+.stat-card.green .stat-value  { color: var(--green); }
+.stat-card.amber .stat-value  { color: var(--amber); }
+.stat-card.blue .stat-value   { color: var(--blue); }
+.stat-card.purple .stat-value { color: var(--purple); }
+.stat-change { font-family: var(--mono); font-size: 10px; color: var(--text-dim); }
+
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.section-title { font-family: var(--display); font-weight: 700; font-size: 15px; flex: 1; }
+.section-badge { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border2); color: var(--text-dim); }
+
+.trends-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 28px; }
+
+.trend-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+.trend-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.trend-card.selected { border-color: var(--green); background: linear-gradient(135deg,var(--surface) 0%,rgba(0,255,163,0.04) 100%); }
+
+.trend-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+
+.signal-score { min-width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; font-size: 13px; flex-shrink: 0; }
+.signal-score.high   { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,255,163,0.25); }
+.signal-score.medium { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(255,181,71,0.25); }
+.signal-score.low    { background: var(--blue-dim);  color: var(--blue);  border: 1px solid rgba(96,165,250,0.25); }
+
+.trend-meta { flex: 1; min-width: 0; }
+.trend-title { font-family: var(--display); font-weight: 700; font-size: 13.5px; line-height: 1.3; margin-bottom: 3px; }
+.trend-category { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-faint); }
+
+.momentum-badge { font-family: var(--mono); font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+.momentum-badge.surging  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(0,255,163,0.3); }
+.momentum-badge.rising   { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(255,181,71,0.3); }
+.momentum-badge.stable   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(96,165,250,0.3); }
+.momentum-badge.breaking { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,92,92,0.3); }
+
+.trend-summary { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; margin-bottom: 12px; }
+
+.tags-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.tag { font-family: var(--mono); font-size: 9px; color: var(--text-dim); background: var(--surface2); border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: all 0.15s; user-select: none; }
+.tag:hover { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+.tag.active { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+
+.trend-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stat-mini { font-family: var(--mono); font-size: 10px; color: var(--green); display: flex; align-items: center; gap: 3px; }
+.stat-mini.neutral { color: var(--text-dim); }
+.divider-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--text-faint); }
+.score-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg,var(--amber),var(--green)); }
+
+.tag-filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); align-items: center; }
+.tag-filter-label { font-family: var(--mono); font-size: 9px; color: var(--text-faint); letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; flex-shrink: 0; }
+.clear-filter-btn { margin-left: auto; font-family: var(--mono); font-size: 9px; color: var(--red); background: none; border: 1px solid rgba(255,92,92,0.3); border-radius: 4px; padding: 3px 8px; cursor: pointer; display: none; }
+.clear-filter-btn.visible { display: block; }
+
+.alerts-list { display: flex; flex-direction: column; gap: 10px; }
+.alert-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start; transition: all 0.15s; animation: fadeIn 0.3s ease forwards; }
+.alert-card:hover { border-color: var(--border2); }
+.alert-left { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
+.alert-severity { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.alert-severity.critical { background: var(--red);   box-shadow: 0 0 10px var(--red); }
+.alert-severity.high     { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+.alert-severity.medium   { background: var(--blue);  box-shadow: 0 0 8px var(--blue); }
+.alert-severity.low      { background: var(--text-faint); }
+.alert-body { flex: 1; min-width: 0; }
+.alert-title { font-family: var(--display); font-weight: 600; font-size: 13.5px; margin-bottom: 4px; }
+.alert-desc  { font-size: 12px; color: var(--text-dim); line-height: 1.5; margin-bottom: 6px; }
+.alert-action { font-size: 11px; color: var(--green); font-style: italic; margin-bottom: 6px; }
+.alert-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.alert-type-badge { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; border: 1px solid var(--border2); color: var(--text-dim); }
+.alert-time { font-family: var(--mono); font-size: 9px; color: var(--text-faint); margin-left: auto; }
+.verified { color: var(--blue); font-size: 10px; }
+
+.content-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-top: 20px; }
+.panel-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.panel-title { font-family: var(--display); font-weight: 700; font-size: 15px; flex: 1; }
+
+.tab-row { display: flex; gap: 4px; margin-bottom: 16px; background: var(--surface2); padding: 4px; border-radius: 8px; border: 1px solid var(--border); overflow-x: auto; }
+.tab { flex: 1; padding: 7px 10px; border-radius: 6px; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; color: var(--text-dim); border: none; background: none; transition: all 0.15s; white-space: nowrap; min-height: 36px; }
+.tab.active { background: var(--green); color: #000; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.tweet-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; position: relative; }
+.tweet-type { display: inline-block; font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 20px; margin-bottom: 8px; }
+.tweet-type.alpha        { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(0,255,163,0.2); }
+.tweet-type.educational  { background: var(--blue-dim);   color: var(--blue);   border: 1px solid rgba(96,165,250,0.2); }
+.tweet-type.contrarian   { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,92,92,0.2); }
+.tweet-type.viral        { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+.tweet-hook { font-family: var(--display); font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+.tweet-body { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; padding-right: 60px; }
+.copy-btn { position: absolute; top: 12px; right: 12px; background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 4px 10px; font-family: var(--mono); font-size: 9px; color: var(--text-dim); cursor: pointer; transition: all 0.15s; min-height: 28px; }
+.copy-btn:hover { border-color: var(--green); color: var(--green); }
+
+.thread-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+.thread-title { font-family: var(--display); font-weight: 700; font-size: 13px; margin-bottom: 10px; }
+.thread-outline { display: flex; flex-direction: column; gap: 8px; }
+.thread-point { display: flex; gap: 10px; align-items: flex-start; }
+.thread-num { font-family: var(--mono); font-size: 9px; color: var(--green); background: var(--green-dim); border: 1px solid rgba(0,255,163,0.2); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.thread-text { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+
+.hook-item { display: flex; gap: 10px; align-items: center; padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; transition: all 0.15s; cursor: pointer; min-height: 44px; }
+.hook-item:hover { border-color: var(--green); }
+.hook-arrow { font-family: var(--mono); font-size: 12px; color: var(--green); flex-shrink: 0; }
+.hook-text { font-size: 13px; color: var(--text); font-style: italic; flex: 1; }
+
+.trend-selector-item { display: flex; gap: 10px; align-items: center; padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; transition: all 0.15s; cursor: pointer; min-height: 48px; }
+.trend-selector-item:hover { border-color: var(--border2); }
+.trend-selector-item.selected { border-color: var(--green); background: var(--green-dim); }
+
+.pulse-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.pulse-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+.pulse-label { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
+.sentiment-bar { height: 6px; background: var(--surface2); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
+.sentiment-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg,var(--red),var(--amber),var(--green)); transition: width 1s ease; }
+.ecosystem-list { display: flex; flex-direction: column; gap: 8px; }
+.eco-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--surface2); border-radius: 8px; border: 1px solid var(--border); }
+.eco-name { font-weight: 500; font-size: 12.5px; flex: 1; }
+.eco-momentum { font-family: var(--mono); font-size: 10px; }
+.eco-momentum.up     { color: var(--green); }
+.eco-momentum.down   { color: var(--red); }
+.eco-momentum.stable { color: var(--text-dim); }
+
+.deep-dive-input { display: flex; gap: 10px; margin-bottom: 20px; }
+.search-input { flex: 1; background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 16px; font-family: var(--body); font-size: 13.5px; color: var(--text); outline: none; transition: border-color 0.15s; min-height: 44px; }
+.search-input:focus { border-color: var(--green); }
+.search-input::placeholder { color: var(--text-faint); }
+.dive-btn { padding: 11px 18px; background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; font-family: var(--display); font-weight: 700; font-size: 12px; color: var(--text); cursor: pointer; transition: all 0.15s; white-space: nowrap; min-height: 44px; }
+.dive-btn:hover { border-color: var(--green); color: var(--green); }
+.research-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.research-section { margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+.research-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.research-label { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+.research-text  { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+.key-player { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.key-player:last-child { border-bottom: none; }
+.player-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-top: 7px; flex-shrink: 0; }
+.player-name { font-weight: 600; font-size: 12.5px; color: var(--text); }
+.player-role { font-size: 11.5px; color: var(--text-dim); }
+
+.about-hero { background: linear-gradient(135deg,var(--surface) 0%,rgba(0,255,163,0.05) 100%); border: 1px solid rgba(0,255,163,0.15); border-radius: var(--radius); padding: 32px; margin-bottom: 24px; text-align: center; }
+.about-hero-icon  { font-size: 48px; margin-bottom: 12px; }
+.about-hero-title { font-family: var(--display); font-weight: 800; font-size: 28px; color: var(--green); margin-bottom: 8px; }
+.about-hero-sub   { font-size: 14px; color: var(--text-dim); max-width: 500px; margin: 0 auto; line-height: 1.7; }
+
+.about-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 24px; }
+.about-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+.about-card-icon  { font-size: 24px; margin-bottom: 10px; }
+.about-card-title { font-family: var(--display); font-weight: 700; font-size: 14px; margin-bottom: 8px; color: var(--text); }
+.about-card-text  { font-size: 12.5px; color: var(--text-dim); line-height: 1.7; }
+
+.how-it-works { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 24px; }
+.how-title    { font-family: var(--display); font-weight: 700; font-size: 16px; margin-bottom: 20px; color: var(--text); }
+.how-steps    { display: flex; flex-direction: column; gap: 16px; }
+.how-step     { display: flex; gap: 14px; align-items: flex-start; }
+.step-num     { width: 32px; height: 32px; border-radius: 50%; background: var(--green-dim); border: 1px solid rgba(0,255,163,0.3); color: var(--green); font-family: var(--mono); font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-title   { font-family: var(--display); font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+.step-text    { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; }
+
+.faq-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 24px; }
+.faq-item { border-bottom: 1px solid var(--border); padding: 14px 0; }
+.faq-item:last-child { border-bottom: none; }
+.faq-q { font-family: var(--display); font-weight: 700; font-size: 13.5px; color: var(--text); margin-bottom: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+.faq-arrow { color: var(--green); transition: transform 0.2s; flex-shrink: 0; }
+.faq-q.open .faq-arrow { transform: rotate(90deg); }
+.faq-a { font-size: 12.5px; color: var(--text-dim); line-height: 1.7; display: none; padding-top: 6px; }
+.faq-a.open { display: block; }
+
+.feature-guide { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 24px; }
+.feature-row { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.feature-row:last-child { border-bottom: none; }
+.feature-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.feature-text { flex: 1; }
+.feature-name { font-family: var(--display); font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+.feature-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+
+.loader { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 14px; }
+.spinner { width: 34px; height: 34px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-text { font-family: var(--mono); font-size: 11px; color: var(--green); letter-spacing: 1px; animation: blink 1.2s ease-in-out infinite; text-align: center; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.error-msg { background: var(--red-dim); border: 1px solid rgba(255,92,92,0.25); border-radius: 10px; padding: 16px 20px; color: var(--red); font-size: 13px; text-align: center; line-height: 1.6; }
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text-faint); font-family: var(--mono); font-size: 12px; letter-spacing: 1px; }
+.fade-in { animation: fadeIn 0.4s ease forwards; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .burger-btn { display: flex; }
+  .timestamp { display: none !important; }
+  .stats-row { grid-template-columns: repeat(2,1fr); gap: 10px; }
+  .trends-grid { grid-template-columns: 1fr; }
+  .pulse-grid { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; }
+  .content { padding: 16px; }
+  .topbar { padding: 10px 16px; }
+  .about-hero { padding: 24px 16px; }
+  .about-hero-title { font-size: 22px; }
+  .deep-dive-input { flex-direction: column; }
+  .dive-btn { width: 100%; justify-content: center; }
+  .tab { font-size: 9px; padding: 6px 8px; }
+}
+
+@media (max-width: 480px) {
+  .stats-row { grid-template-columns: repeat(2,1fr); gap: 8px; }
+  .stat-card { padding: 12px 14px; }
+  .stat-value { font-size: 22px; }
+  .trend-card { padding: 14px; }
+  .trend-title { font-size: 13px; }
+  .page-title { font-size: 15px; }
+  .scan-btn { padding: 8px 10px; font-size: 11px; }
+  .scan-btn span { display: none; }
+  .content-panel { padding: 14px; }
+  .alert-card { padding: 12px 14px; }
+  .about-hero-title { font-size: 20px; }
+  .research-panel { padding: 16px; }
+  .tab-row { gap: 2px; }
+  .tab { padding: 6px 6px; font-size: 8px; letter-spacing: 0; }
+}
+
+@media (min-width: 769px) {
+  .timestamp { display: block; }
+  .burger-btn { display: none !important; }
+  .overlay { display: none !important; }
+}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <nav class="sidebar">
-    <div class="logo">
-      <div class="logo-mark">
-        <div class="logo-icon">📡</div>
-        <div class="logo-text">Alpha Radar</div>
-      </div>
-      <div class="logo-sub">Web3 Intelligence</div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<nav class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-mark">
+      <div class="logo-icon">📡</div>
+      <div class="logo-text">Alpha Radar</div>
     </div>
-
-    <div class="nav">
-      <button class="nav-item active" onclick="navigate('dashboard')">
-        <span class="nav-icon">◈</span> Dashboard
-      </button>
-      <button class="nav-item" onclick="navigate('trends')">
-        <span class="nav-icon">⬡</span> Trends
-      </button>
-      <button class="nav-item" onclick="navigate('alerts')">
-        <span class="nav-icon">⚡</span> Alerts
-        <span class="nav-badge" id="alert-count">—</span>
-      </button>
-      <button class="nav-item" onclick="navigate('content')">
-        <span class="nav-icon">✦</span> Content Ideas
-      </button>
-      <button class="nav-item" onclick="navigate('pulse')">
-        <span class="nav-icon">◎</span> Ecosystem Pulse
-      </button>
-      <button class="nav-item" onclick="navigate('deepdive')">
-        <span class="nav-icon">⊕</span> Deep Dive
-      </button>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="status-pill">
-        <div class="status-dot"></div>
-        <span>LIVE SCANNING</span>
-      </div>
-    </div>
-  </nav>
-
-  <div class="main">
-    <div class="topbar">
-      <div class="page-title" id="page-title">Dashboard</div>
-      <div class="timestamp" id="top-timestamp">—</div>
-      <button class="scan-btn" id="scan-btn" onclick="handleScan()">
-        ◈ Scan Now
-      </button>
-    </div>
-
-    <div class="content">
-
-      <div class="view active" id="view-dashboard">
-        <div class="stats-row">
-          <div class="stat-card green">
-            <div class="stat-label">Active Narratives</div>
-            <div class="stat-value" id="stat-narratives">—</div>
-            <div class="stat-change">Detected this scan</div>
-          </div>
-          <div class="stat-card amber">
-            <div class="stat-label">Avg Signal Score</div>
-            <div class="stat-value" id="stat-avg-score">—</div>
-            <div class="stat-change">Across all trends</div>
-          </div>
-          <div class="stat-card blue">
-            <div class="stat-label">Surging Trends</div>
-            <div class="stat-value" id="stat-surging">—</div>
-            <div class="stat-change">High momentum</div>
-          </div>
-          <div class="stat-card purple">
-            <div class="stat-label">Active Alerts</div>
-            <div class="stat-value" id="stat-alerts">—</div>
-            <div class="stat-change">Requires attention</div>
-          </div>
-        </div>
-
-        <div class="section-header">
-          <div class="section-title">Top Narratives</div>
-          <div class="section-badge">Ranked by Signal Score</div>
-        </div>
-
-        <div id="dashboard-trends">
-          <div class="loader">
-            <div class="spinner"></div>
-            <div class="loader-text">SCANNING WEB3 ECOSYSTEM...</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="view" id="view-trends">
-        <div class="section-header">
-          <div class="section-title">All Detected Narratives</div>
-          <div class="section-badge" id="trends-count-badge">Loading...</div>
-        </div>
-        <div id="trends-grid">
-          <div class="loader">
-            <div class="spinner"></div>
-            <div class="loader-text">LOADING TRENDS...</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="view" id="view-alerts">
-        <div class="section-header">
-          <div class="section-title">Alpha Alerts</div>
-          <div class="section-badge">Real-time Signals</div>
-        </div>
-        <div id="alerts-list">
-          <div class="loader">
-            <div class="spinner"></div>
-            <div class="loader-text">FETCHING ALERTS...</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="view" id="view-content">
-        <div class="section-header">
-          <div class="section-title">Content Idea Generator</div>
-          <div class="section-badge">Select a trend to generate</div>
-        </div>
-
-        <div style="margin-bottom:20px;">
-          <p style="color:var(--text-dim); font-size:13px; margin-bottom:14px;">
-            Select a narrative below to instantly generate tweets, threads, hooks, and content angles.
-          </p>
-          <div id="content-trend-selector">
-            <div class="loader">
-              <div class="spinner"></div>
-              <div class="loader-text">LOADING TRENDS...</div>
-            </div>
-          </div>
-        </div>
-
-        <div id="content-ideas-output">
-          <div class="empty-state">← SELECT A NARRATIVE TO GENERATE IDEAS</div>
-        </div>
-      </div>
-
-      <div class="view" id="view-pulse">
-        <div class="section-header">
-          <div class="section-title">Ecosystem Pulse</div>
-          <div class="section-badge">Market Intelligence</div>
-        </div>
-        <div id="pulse-content">
-          <div class="loader">
-            <div class="spinner"></div>
-            <div class="loader-text">READING ECOSYSTEM...</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="view" id="view-deepdive">
-        <div class="section-header">
-          <div class="section-title">Deep Dive Research</div>
-          <div class="section-badge">AI-Powered Analysis</div>
-        </div>
-
-        <div class="deep-dive-input">
-          <input
-            type="text"
-            class="search-input"
-            id="dive-input"
-            placeholder="Enter a topic, protocol, or narrative to research..."
-            onkeydown="if(event.key==='Enter') startDeepDive()"
-          >
-          <button class="dive-btn" onclick="startDeepDive()">⊕ Deep Dive</button>
-        </div>
-
-        <div id="dive-result">
-          <div class="empty-state">ENTER A TOPIC ABOVE TO BEGIN RESEARCH</div>
-        </div>
-      </div>
-
+    <div class="logo-sub">Web3 Intelligence</div>
+  </div>
+  <div class="nav">
+    <button class="nav-item active" onclick="navigate('dashboard',this)"><span class="nav-icon">◈</span> Dashboard</button>
+    <button class="nav-item" onclick="navigate('trends',this)"><span class="nav-icon">⬡</span> Trends</button>
+    <button class="nav-item" onclick="navigate('alerts',this)"><span class="nav-icon">⚡</span> Alerts<span class="nav-badge" id="alert-count">—</span></button>
+    <button class="nav-item" onclick="navigate('content',this)"><span class="nav-icon">✦</span> Content Ideas</button>
+    <button class="nav-item" onclick="navigate('pulse',this)"><span class="nav-icon">◎</span> Ecosystem Pulse</button>
+    <button class="nav-item" onclick="navigate('deepdive',this)"><span class="nav-icon">⊕</span> Deep Dive</button>
+    <button class="nav-item" onclick="navigate('about',this)"><span class="nav-icon">◉</span> About</button>
+  </div>
+  <div class="sidebar-footer">
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      <span>LIVE SCANNING</span>
     </div>
   </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <button class="burger-btn" onclick="toggleSidebar()">☰</button>
+    <div class="page-title" id="page-title">Dashboard</div>
+    <div class="timestamp" id="top-timestamp">—</div>
+    <button class="scan-btn" id="scan-btn" onclick="handleScan()">◈ <span>Scan Now</span></button>
+  </div>
+
+  <div class="content">
+
+    <!-- Dashboard -->
+    <div class="view active" id="view-dashboard">
+      <div class="stats-row">
+        <div class="stat-card green"><div class="stat-label">Active Narratives</div><div class="stat-value" id="stat-narratives">—</div><div class="stat-change">Detected this scan</div></div>
+        <div class="stat-card amber"><div class="stat-label">Avg Signal Score</div><div class="stat-value" id="stat-avg-score">—</div><div class="stat-change">Across all trends</div></div>
+        <div class="stat-card blue"><div class="stat-label">Surging Trends</div><div class="stat-value" id="stat-surging">—</div><div class="stat-change">High momentum</div></div>
+        <div class="stat-card purple"><div class="stat-label">Active Alerts</div><div class="stat-value" id="stat-alerts">—</div><div class="stat-change">Requires attention</div></div>
+      </div>
+      <div class="section-header">
+        <div class="section-title">Top Narratives</div>
+        <div class="section-badge">Ranked by Signal Score</div>
+      </div>
+      <div id="dashboard-trends"><div class="loader"><div class="spinner"></div><div class="loader-text">SCANNING WEB3 ECOSYSTEM...</div></div></div>
+    </div>
+
+    <!-- Trends -->
+    <div class="view" id="view-trends">
+      <div class="section-header">
+        <div class="section-title">All Detected Narratives</div>
+        <div class="section-badge" id="trends-count-badge">Loading...</div>
+      </div>
+      <div class="tag-filter-bar" id="tag-filter-bar">
+        <span class="tag-filter-label">Filter by tag:</span>
+        <div id="global-tags" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
+        <button class="clear-filter-btn" id="clear-filter-btn" onclick="clearTagFilter()">✕ Clear</button>
+      </div>
+      <div id="trends-grid"><div class="loader"><div class="spinner"></div><div class="loader-text">LOADING TRENDS...</div></div></div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="view" id="view-alerts">
+      <div class="section-header">
+        <div class="section-title">Alpha Alerts</div>
+        <div class="section-badge" id="alerts-count-badge">Real-time Signals</div>
+      </div>
+      <div id="alerts-container"><div class="loader"><div class="spinner"></div><div class="loader-text">FETCHING ALERTS...</div></div></div>
+    </div>
+
+    <!-- Content Ideas -->
+    <div class="view" id="view-content">
+      <div class="section-header">
+        <div class="section-title">Content Idea Generator</div>
+        <div class="section-badge">AI Writing Assistant</div>
+      </div>
+      <p style="color:var(--text-dim);font-size:13px;margin-bottom:14px;line-height:1.6">Select a trending narrative below. The AI will instantly generate tweets, thread outlines, viral hooks, and platform-specific angles you can edit and publish.</p>
+      <div id="content-trend-selector"><div class="loader"><div class="spinner"></div><div class="loader-text">LOADING TRENDS...</div></div></div>
+      <div id="content-ideas-output"><div class="empty-state">← SELECT A NARRATIVE TO GENERATE IDEAS</div></div>
+    </div>
+
+    <!-- Pulse -->
+    <div class="view" id="view-pulse">
+      <div class="section-header">
+        <div class="section-title">Ecosystem Pulse</div>
+        <div class="section-badge">Market Intelligence</div>
+      </div>
+      <div id="pulse-content"><div class="loader"><div class="spinner"></div><div class="loader-text">READING ECOSYSTEM...</div></div></div>
+    </div>
+
+    <!-- Deep Dive -->
+    <div class="view" id="view-deepdive">
+      <div class="section-header">
+        <div class="section-title">Deep Dive Research</div>
+        <div class="section-badge">AI-Powered Analysis</div>
+      </div>
+      <div class="deep-dive-input">
+        <input type="text" class="search-input" id="dive-input" placeholder="Enter a topic, protocol, or narrative..." onkeydown="if(event.key==='Enter') startDeepDive()">
+        <button class="dive-btn" onclick="startDeepDive()">⊕ Deep Dive</button>
+      </div>
+      <div id="dive-result"><div class="empty-state">ENTER A TOPIC ABOVE TO BEGIN RESEARCH</div></div>
+    </div>
+
+    <!-- About -->
+    <div class="view" id="view-about">
+      <div class="about-hero">
+        <div class="about-hero-icon">📡</div>
+        <div class="about-hero-title">Web3 Alpha Radar</div>
+        <p class="about-hero-sub">An AI-powered trend intelligence platform built for Web3 content creators, researchers, and analysts who want to stay ahead of emerging crypto narratives — before they go mainstream.</p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card"><div class="about-card-icon">🔍</div><div class="about-card-title">Multi-Source Trend Scanner</div><div class="about-card-text">Continuously scans crypto news, blockchain project blogs, GitHub repositories, developer forums, and Web3 social discussions to collect emerging signals across the ecosystem.</div></div>
+        <div class="about-card"><div class="about-card-icon">🧠</div><div class="about-card-title">Narrative Detection Engine</div><div class="about-card-text">AI groups raw signals into coherent narratives — like "Bitcoin Layer 2 Wars" or "AI+Blockchain Integrations" — and explains why each is gaining traction with a signal score.</div></div>
+        <div class="about-card"><div class="about-card-icon">✍️</div><div class="about-card-title">Content Idea Generator</div><div class="about-card-text">Acts as a writing assistant. Select any trend and instantly receive tweets, thread outlines, viral hooks, and platform-specific angles you can edit and publish immediately.</div></div>
+        <div class="about-card"><div class="about-card-icon">⚡</div><div class="about-card-title">Alpha Alert System</div><div class="about-card-text">Monitors urgent signals — protocol launches, exploits, whale movements, governance votes, and funding announcements — sorted by severity so you never miss breaking news.</div></div>
+        <div class="about-card"><div class="about-card-icon">📊</div><div class="about-card-title">Signal Scoring System</div><div class="about-card-text">Every trend is scored 0–100 based on mention growth, sources, developer activity, funding signals, and community engagement to help you distinguish signal from noise.</div></div>
+        <div class="about-card"><div class="about-card-icon">🌐</div><div class="about-card-title">Ecosystem Pulse</div><div class="about-card-text">A high-level market intelligence snapshot showing overall sentiment, top active ecosystems, dominant narratives, VC activity, and a key weekly insight.</div></div>
+      </div>
+
+      <div class="how-it-works">
+        <div class="how-title">How It Works</div>
+        <div class="how-steps">
+          <div class="how-step"><div class="step-num">1</div><div class="step-content"><div class="step-title">AI Scans the Ecosystem</div><div class="step-text">Hit "Scan Now" and the AI searches crypto news, social media, GitHub, and Web3 forums for the latest developments and emerging narratives in real time.</div></div></div>
+          <div class="how-step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Narratives Are Detected & Scored</div><div class="step-text">Raw signals are grouped into coherent narratives and scored based on momentum, source count, developer activity, and funding signals. Higher scores mean stronger signals.</div></div></div>
+          <div class="how-step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Browse & Filter by Tags</div><div class="step-text">Each narrative includes clickable tags. Tap any tag to filter the trend list and find related narratives instantly.</div></div></div>
+          <div class="how-step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Generate Content Ideas</div><div class="step-text">Select any trend in the Content Ideas tab. The AI generates ready-to-use tweets, thread outlines, viral hooks, and platform-specific angles you can copy and publish.</div></div></div>
+          <div class="how-step"><div class="step-num">5</div><div class="step-content"><div class="step-title">Deep Dive Any Topic</div><div class="step-text">Type any topic or protocol into the Deep Dive tool. Get a structured research report with key players, bull/bear cases, on-chain signals, and content opportunities.</div></div></div>
+        </div>
+      </div>
+
+      <div class="feature-guide">
+        <div class="how-title">Feature Guide</div>
+        <div class="feature-row"><div class="feature-icon">◈</div><div class="feature-text"><div class="feature-name">Dashboard</div><div class="feature-desc">Your home base. Shows key stats and top 4 highest-scored narratives. Click any card to jump to Content Ideas for that trend.</div></div></div>
+        <div class="feature-row"><div class="feature-icon">⬡</div><div class="feature-text"><div class="feature-name">Trends</div><div class="feature-desc">Full list of all detected narratives. Use the tag filter bar to filter trends by clicking any tag.</div></div></div>
+        <div class="feature-row"><div class="feature-icon">⚡</div><div class="feature-text"><div class="feature-name">Alerts</div><div class="feature-desc">Sorted by severity — critical first with a glowing red dot. Each alert includes an actionable recommendation.</div></div></div>
+        <div class="feature-row"><div class="feature-icon">✦</div><div class="feature-text"><div class="feature-name">Content Ideas</div><div class="feature-desc">Select a trend, then browse Tweets, Threads, Hooks, and Angles tabs. Copy any tweet or hook instantly.</div></div></div>
+        <div class="feature-row"><div class="feature-icon">◎</div><div class="feature-text"><div class="feature-name">Ecosystem Pulse</div><div class="feature-desc">Market overview with sentiment score, ecosystem momentum, dominant narratives, and a weekly key insight.</div></div></div>
+        <div class="feature-row"><div class="feature-icon">⊕</div><div class="feature-text"><div class="feature-name">Deep Dive</div><div class="feature-desc">Type any topic and press Enter. Get a structured research report covering overview, key players, and content opportunities.</div></div></div>
+      </div>
+
+      <div class="faq-section">
+        <div class="how-title">Frequently Asked Questions</div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-arrow">▶</span>How often does the data update?</div><div class="faq-a">Data updates every time you click "Scan Now". Results are cached for 5 minutes. Auto-refresh runs every 5 minutes in the background.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-arrow">▶</span>Is the data real or made up?</div><div class="faq-a">The AI generates narratives based on its deep knowledge of the Web3 ecosystem and current trends. It reflects real patterns in the space but is not pulling live on-chain data. Treat it as intelligent analysis, not financial advice.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-arrow">▶</span>How do I use Content Ideas for posting?</div><div class="faq-a">Go to Content Ideas, select a trend, then copy any tweet or hook using the Copy button. For threads, use the outline as structure and write your own version of each point.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-arrow">▶</span>What do the signal scores mean?</div><div class="faq-a">Scores range 0–100. Above 85 means very strong signal with high momentum. 70–84 is a solid emerging trend. Below 70 is early-stage or lower confidence. Focus on surging or breaking badges for the freshest opportunities.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-arrow">▶</span>Can I install this as a mobile app?</div><div class="faq-a">Yes! On Android, open Chrome and tap "Add to Home Screen". On iPhone, open Safari, tap the Share button, then "Add to Home Screen". It installs like a native app with its own icon.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-arrow">▶</span>Is this free to use?</div><div class="faq-a">Yes, completely free. The platform runs on Groq's free AI tier and free hosting. No subscription or credit card required.</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
 </div>
 
 <script>
-const API = 'https://web3-alpha-radar.onrender.com/api';
-let state = {
-  trends: [],
-  alerts: [],
-  pulse: null,
-  selectedTrend: null,
-  currentView: 'dashboard',
-  lastScan: null,
-};
+const API = 'http://localhost:3001/api'; // Change to your Render URL when deploying
 
-function navigate(view) {
-  state.currentView = view;
+let state = { trends:[], alerts:[], pulse:null, activeTag:null, lastScan:null };
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('active');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+function navigate(view, btn) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  if (btn) btn.classList.add('active');
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
-  const titles = { dashboard:'Dashboard', trends:'Trend Scanner', alerts:'Alpha Alerts', content:'Content Ideas', pulse:'Ecosystem Pulse', deepdive:'Deep Dive Research' };
+  const titles = { dashboard:'Dashboard', trends:'Trend Scanner', alerts:'Alpha Alerts', content:'Content Ideas', pulse:'Ecosystem Pulse', deepdive:'Deep Dive Research', about:'About' };
   document.getElementById('page-title').textContent = titles[view] || view;
-  if (view === 'alerts' && state.alerts.length === 0) loadAlerts();
-  if (view === 'pulse' && !state.pulse) loadPulse();
+  closeSidebar();
+  if (view === 'alerts'  && state.alerts.length === 0) loadAlerts();
+  if (view === 'pulse'   && !state.pulse)              loadPulse();
   if (view === 'content' && state.trends.length === 0) loadTrends();
-  if (view === 'trends' && state.trends.length === 0) loadTrends();
+  if (view === 'trends'  && state.trends.length === 0) loadTrends();
 }
 
 async function handleScan() {
   const btn = document.getElementById('scan-btn');
   btn.disabled = true;
-  btn.textContent = '◌ Scanning...';
-  state.trends = []; state.alerts = []; state.pulse = null;
-  await loadTrends();
+  btn.innerHTML = '◌ <span>Scanning...</span>';
+  state.trends=[]; state.alerts=[]; state.pulse=null; state.activeTag=null;
+  await Promise.all([loadTrends(), loadAlerts()]);
   btn.disabled = false;
-  btn.textContent = '◈ Scan Now';
+  btn.innerHTML = '◈ <span>Scan Now</span>';
 }
 
 async function loadTrends() {
-  setLoading('dashboard-trends');
-  setLoading('trends-grid');
+  setLoading('dashboard-trends'); setLoading('trends-grid');
   try {
     const res = await fetch(`${API}/trends`);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     state.trends = data.trends || [];
     state.lastScan = new Date();
-    renderDashboard(); renderTrends(); renderContentSelector(); updateTimestamp();
+    renderDashboard(); renderTrends(); renderContentSelector(); renderGlobalTags(); updateTimestamp();
   } catch(e) {
     showError('dashboard-trends', e.message);
     showError('trends-grid', e.message);
@@ -1226,17 +620,22 @@ async function loadTrends() {
 }
 
 async function loadAlerts() {
-  setLoading('alerts-list');
+  setLoading('alerts-container');
   try {
     const res = await fetch(`${API}/alerts`);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    state.alerts = data.alerts || [];
+    const severityOrder = { critical:0, high:1, medium:2, low:3 };
+    const seen = new Set();
+    state.alerts = (data.alerts || [])
+      .filter(a => { if (seen.has(a.id)) return false; seen.add(a.id); return true; })
+      .sort((a,b) => (severityOrder[a.severity]||3) - (severityOrder[b.severity]||3));
     renderAlerts();
-    const count = state.alerts.filter(a => a.severity === 'critical' || a.severity === 'high').length;
-    document.getElementById('alert-count').textContent = count || '—';
+    const critCount = state.alerts.filter(a => a.severity==='critical'||a.severity==='high').length;
+    document.getElementById('alert-count').textContent = critCount || '—';
     document.getElementById('stat-alerts').textContent = state.alerts.length;
-  } catch(e) { showError('alerts-list', e.message); }
+    document.getElementById('alerts-count-badge').textContent = `${state.alerts.length} Active`;
+  } catch(e) { showError('alerts-container', e.message); }
 }
 
 async function loadPulse() {
@@ -1251,18 +650,16 @@ async function loadPulse() {
 }
 
 async function generateContentIdeas(trend) {
-  state.selectedTrend = trend;
-  document.querySelectorAll('.trend-selector-item').forEach(el => {
-    el.classList.toggle('selected', el.dataset.id === trend.id);
-  });
+  document.querySelectorAll('.trend-selector-item').forEach(el =>
+    el.classList.toggle('selected', el.dataset.id === trend.id));
   const out = document.getElementById('content-ideas-output');
   out.innerHTML = `<div class="loader"><div class="spinner"></div><div class="loader-text">GENERATING CONTENT IDEAS...</div></div>`;
   try {
-    const res = await fetch(`${API}/content-ideas`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ trend }) });
+    const res = await fetch(`${API}/content-ideas`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({trend}) });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     renderContentIdeas(data.ideas, trend);
-  } catch(e) { out.innerHTML = `<div class="error-msg">Failed to generate: ${e.message}</div>`; }
+  } catch(e) { out.innerHTML = `<div class="error-msg">Failed: ${e.message}</div>`; }
 }
 
 async function startDeepDive() {
@@ -1271,37 +668,60 @@ async function startDeepDive() {
   const out = document.getElementById('dive-result');
   out.innerHTML = `<div class="loader"><div class="spinner"></div><div class="loader-text">RESEARCHING "${topic.toUpperCase()}"...</div></div>`;
   try {
-    const res = await fetch(`${API}/deep-dive`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topic }) });
+    const res = await fetch(`${API}/deep-dive`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({topic}) });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     renderDeepDive(data.research, topic);
-  } catch(e) { out.innerHTML = `<div class="error-msg">Research failed: ${e.message}</div>`; }
+  } catch(e) { out.innerHTML = `<div class="error-msg">Failed: ${e.message}</div>`; }
+}
+
+function filterByTag(tag) {
+  state.activeTag = state.activeTag === tag ? null : tag;
+  document.querySelectorAll('#global-tags .tag').forEach(el => el.classList.toggle('active', el.dataset.tag === state.activeTag));
+  document.getElementById('clear-filter-btn').classList.toggle('visible', !!state.activeTag);
+  renderTrends();
+}
+
+function clearTagFilter() {
+  state.activeTag = null;
+  document.querySelectorAll('#global-tags .tag').forEach(el => el.classList.remove('active'));
+  document.getElementById('clear-filter-btn').classList.remove('visible');
+  renderTrends();
+}
+
+function renderGlobalTags() {
+  const allTags = [...new Set(state.trends.flatMap(t => t.tags||[]))];
+  document.getElementById('global-tags').innerHTML = allTags.map(tag =>
+    `<span class="tag" data-tag="${tag}" onclick="filterByTag('${tag}')">${tag}</span>`
+  ).join('');
 }
 
 function renderDashboard() {
   const trends = state.trends;
   if (!trends.length) return;
-  const avg = Math.round(trends.reduce((s,t) => s+(t.signalScore||0),0)/trends.length);
-  const surging = trends.filter(t => t.momentum==='surging'||t.momentum==='breaking').length;
+  const avg = Math.round(trends.reduce((s,t)=>s+(t.signalScore||0),0)/trends.length);
+  const surging = trends.filter(t=>t.momentum==='surging'||t.momentum==='breaking').length;
   document.getElementById('stat-narratives').textContent = trends.length;
-  document.getElementById('stat-avg-score').textContent = avg;
-  document.getElementById('stat-surging').textContent = surging;
+  document.getElementById('stat-avg-score').textContent  = avg;
+  document.getElementById('stat-surging').textContent    = surging;
   const top = [...trends].sort((a,b)=>(b.signalScore||0)-(a.signalScore||0)).slice(0,4);
   document.getElementById('dashboard-trends').innerHTML = `<div class="trends-grid fade-in">${top.map(renderTrendCard).join('')}</div>`;
 }
 
 function renderTrends() {
-  const trends = state.trends;
-  document.getElementById('trends-count-badge').textContent = `${trends.length} Narratives`;
+  let trends = state.activeTag ? state.trends.filter(t=>(t.tags||[]).includes(state.activeTag)) : state.trends;
+  document.getElementById('trends-count-badge').textContent = state.activeTag ? `${trends.length} matching "${state.activeTag}"` : `${trends.length} Narratives`;
   const container = document.getElementById('trends-grid');
-  if (!trends.length) { container.innerHTML = '<div class="empty-state">NO TRENDS LOADED</div>'; return; }
+  if (!trends.length) { container.innerHTML = '<div class="empty-state">NO TRENDS MATCH THIS TAG</div>'; return; }
   container.innerHTML = `<div class="trends-grid fade-in">${trends.map(renderTrendCard).join('')}</div>`;
 }
 
 function renderTrendCard(t) {
   const score = t.signalScore||0;
   const scoreClass = score>=85?'high':score>=70?'medium':'low';
-  const tags = (t.tags||[]).slice(0,4).map(tag=>`<span class="signal-tag">${tag}</span>`).join('');
+  const tags = (t.tags||[]).slice(0,5).map(tag =>
+    `<span class="tag" data-tag="${tag}" onclick="event.stopPropagation();filterAndNavigate('${tag}')">${tag}</span>`
+  ).join('');
   const devColor = {'very high':'var(--green)','high':'var(--amber)','medium':'var(--blue)','low':'var(--text-faint)'}[t.devActivity]||'var(--text-faint)';
   return `
   <div class="trend-card" onclick="openTrendDetail('${t.id}')">
@@ -1314,8 +734,8 @@ function renderTrendCard(t) {
       <span class="momentum-badge ${t.momentum||'stable'}">${t.momentum||'stable'}</span>
     </div>
     <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${score}%"></div></div>
-    <p class="trend-summary" style="margin-top:12px">${t.summary||''}</p>
-    <div class="trend-signals">${tags}</div>
+    <p class="trend-summary" style="margin-top:10px">${t.summary||''}</p>
+    <div class="tags-row">${tags}</div>
     <div class="trend-footer">
       <span class="stat-mini">↑ ${t.mentionGrowth||'?%'}</span>
       <span class="divider-dot"></span>
@@ -1325,16 +745,27 @@ function renderTrendCard(t) {
   </div>`;
 }
 
+function filterAndNavigate(tag) {
+  state.activeTag = tag;
+  document.querySelector('.nav-item:nth-child(2)').click();
+  setTimeout(() => {
+    document.querySelectorAll('#global-tags .tag').forEach(el => el.classList.toggle('active', el.dataset.tag===tag));
+    document.getElementById('clear-filter-btn').classList.add('visible');
+    renderTrends();
+  }, 100);
+}
+
 function renderAlerts() {
   const alerts = state.alerts;
-  const container = document.getElementById('alerts-list');
+  const container = document.getElementById('alerts-container');
   if (!alerts.length) { container.innerHTML = '<div class="empty-state">NO ALERTS</div>'; return; }
+  const severityLabel = { critical:'🔴 CRITICAL', high:'🟠 HIGH', medium:'🔵 MEDIUM', low:'⚪ LOW' };
   container.innerHTML = `<div class="alerts-list fade-in">
   ${alerts.map(a=>`
   <div class="alert-card">
-    <div class="alert-severity ${a.severity||'low'}"></div>
+    <div class="alert-left"><div class="alert-severity ${a.severity||'low'}"></div></div>
     <div class="alert-body">
-      <div class="alert-title">${a.title||'Alert'}${a.verified?' <span class="verified">✓ Verified</span>':''}</div>
+      <div class="alert-title">${a.title||'Alert'}${a.verified?' <span class="verified">✓</span>':''} <span style="font-family:var(--mono);font-size:9px;color:var(--text-faint);font-weight:400">${severityLabel[a.severity]||''}</span></div>
       <div class="alert-desc">${a.description||''}</div>
       ${a.actionable?`<div class="alert-action">→ ${a.actionable}</div>`:''}
       <div class="alert-meta">
@@ -1352,11 +783,11 @@ function renderContentSelector() {
   const trends = state.trends;
   const container = document.getElementById('content-trend-selector');
   if (!trends.length) { container.innerHTML = '<div class="empty-state">NO TRENDS LOADED</div>'; return; }
-  container.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:4px;">
+  container.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;padding-right:4px;margin-bottom:16px">
   ${trends.map(t=>`
-  <div class="hook-item trend-selector-item" data-id="${t.id}" onclick='generateContentIdeas(${JSON.stringify(t)})'>
+  <div class="trend-selector-item" data-id="${t.id}" onclick='generateContentIdeas(${JSON.stringify(t).replace(/'/g,"&#39;")})'>
     <div class="hook-arrow">→</div>
-    <div class="hook-text">${t.title}</div>
+    <div class="hook-text" style="font-style:normal;font-size:13px">${t.title}</div>
     <span class="momentum-badge ${t.momentum||'stable'}" style="font-size:8px">${t.momentum||''}</span>
     <span class="signal-score ${t.signalScore>=85?'high':t.signalScore>=70?'medium':'low'}" style="width:36px;height:28px;font-size:11px">${t.signalScore}</span>
   </div>`).join('')}
@@ -1365,7 +796,7 @@ function renderContentSelector() {
 
 function renderContentIdeas(ideas, trend) {
   const out = document.getElementById('content-ideas-output');
-  const tweets = ideas.tweets||[], threads = ideas.threads||[], hooks = ideas.hooks||[], angles = ideas.angles||[];
+  const tweets=ideas.tweets||[], threads=ideas.threads||[], hooks=ideas.hooks||[], angles=ideas.angles||[];
   out.innerHTML = `
   <div class="content-panel fade-in">
     <div class="panel-header">
@@ -1379,44 +810,16 @@ function renderContentIdeas(ideas, trend) {
       <button class="tab" onclick="switchTab(event,'tab-angles')">📐 Angles (${angles.length})</button>
     </div>
     <div class="tab-content active" id="tab-tweets">
-      ${tweets.map(tw=>`
-      <div class="tweet-card">
-        <button class="copy-btn" onclick="copyText(this,'${encodeURIComponent(tw.body||'')}')">Copy</button>
-        <span class="tweet-type ${tw.type||'alpha'}">${tw.type||'alpha'}</span>
-        <div class="tweet-hook">${tw.hook||''}</div>
-        <div class="tweet-body">${tw.body||''}</div>
-      </div>`).join('')||'<div class="empty-state">No tweets generated</div>'}
+      ${tweets.map(tw=>`<div class="tweet-card"><button class="copy-btn" onclick="copyText(this,'${encodeURIComponent(tw.body||'')}')">Copy</button><span class="tweet-type ${tw.type||'alpha'}">${tw.type||'alpha'}</span><div class="tweet-hook">${tw.hook||''}</div><div class="tweet-body">${tw.body||''}</div></div>`).join('')||'<div class="empty-state">No tweets</div>'}
     </div>
     <div class="tab-content" id="tab-threads">
-      ${threads.map(th=>`
-      <div class="thread-card">
-        <div class="thread-title">🧵 ${th.title||'Thread'} <span style="font-size:11px;color:var(--text-faint);font-weight:400;font-family:var(--mono)">· ${th.angle||''}</span></div>
-        <div class="thread-outline">
-          ${(th.outline||[]).map((pt,i)=>`
-          <div class="thread-point">
-            <div class="thread-num">${i+1}</div>
-            <div class="thread-text">${pt}</div>
-          </div>`).join('')}
-        </div>
-      </div>`).join('')||'<div class="empty-state">No threads generated</div>'}
+      ${threads.map(th=>`<div class="thread-card"><div class="thread-title">🧵 ${th.title||'Thread'} <span style="font-size:11px;color:var(--text-faint);font-weight:400;font-family:var(--mono)">· ${th.angle||''}</span></div><div class="thread-outline">${(th.outline||[]).map((pt,i)=>`<div class="thread-point"><div class="thread-num">${i+1}</div><div class="thread-text">${pt}</div></div>`).join('')}</div></div>`).join('')||'<div class="empty-state">No threads</div>'}
     </div>
     <div class="tab-content" id="tab-hooks">
-      ${hooks.map(h=>`
-      <div class="hook-item" onclick="copyHook(this,'${encodeURIComponent(h)}')">
-        <div class="hook-arrow">↗</div>
-        <div class="hook-text">${h}</div>
-        <span style="font-family:var(--mono);font-size:9px;color:var(--text-faint)">CLICK TO COPY</span>
-      </div>`).join('')||'<div class="empty-state">No hooks generated</div>'}
+      ${hooks.map(h=>`<div class="hook-item" onclick="copyHook(this,'${encodeURIComponent(h)}')"><div class="hook-arrow">↗</div><div class="hook-text">${h}</div><span style="font-family:var(--mono);font-size:9px;color:var(--text-faint)">TAP TO COPY</span></div>`).join('')||'<div class="empty-state">No hooks</div>'}
     </div>
     <div class="tab-content" id="tab-angles">
-      ${angles.map(a=>`
-      <div class="tweet-card">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <div class="tweet-hook">${a.title||''}</div>
-          <span class="tweet-type alpha" style="margin:0">${a.platform||''}</span>
-        </div>
-        <div class="tweet-body">${a.description||''}</div>
-      </div>`).join('')||'<div class="empty-state">No angles generated</div>'}
+      ${angles.map(a=>`<div class="tweet-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap"><div class="tweet-hook">${a.title||''}</div><span class="tweet-type alpha" style="margin:0">${a.platform||''}</span></div><div class="tweet-body">${a.description||''}</div></div>`).join('')||'<div class="empty-state">No angles</div>'}
     </div>
   </div>`;
 }
@@ -1436,13 +839,13 @@ function renderPulse() {
         <div class="pulse-label">Market Sentiment</div>
         <div style="font-family:var(--display);font-size:22px;font-weight:800;color:${sentColor};margin-bottom:6px;text-transform:capitalize">${p.overallSentiment||'—'}</div>
         <div class="sentiment-bar"><div class="sentiment-fill" style="width:${sentPct}%"></div></div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim)">${sentPct}/100 Sentiment Score</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim)">${sentPct}/100</div>
       </div>
       <div class="pulse-card">
         <div class="pulse-label">Activity Levels</div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
           <div class="eco-item"><span class="eco-name">Developer Activity</span><span class="eco-momentum up">${p.developerActivity||'—'}</span></div>
-          <div class="eco-item"><span class="eco-name">VC / Funding Activity</span><span class="eco-momentum up">${p.vcActivity||'—'}</span></div>
+          <div class="eco-item"><span class="eco-name">VC / Funding</span><span class="eco-momentum up">${p.vcActivity||'—'}</span></div>
         </div>
       </div>
     </div>
@@ -1450,26 +853,17 @@ function renderPulse() {
       <div class="pulse-card">
         <div class="pulse-label">Top Ecosystems</div>
         <div class="ecosystem-list">
-          ${ecos.map(e=>`
-          <div class="eco-item">
-            <span class="eco-name">${e.name||''}</span>
-            <span style="font-size:11px;color:var(--text-dim);flex:1">${e.activity||''}</span>
-            <span class="eco-momentum ${e.momentum||'stable'}">${e.momentum==='up'?'▲':e.momentum==='down'?'▼':'━'}</span>
-          </div>`).join('')}
+          ${ecos.map(e=>`<div class="eco-item"><span class="eco-name">${e.name||''}</span><span style="font-size:11px;color:var(--text-dim);flex:1">${e.activity||''}</span><span class="eco-momentum ${e.momentum||'stable'}">${e.momentum==='up'?'▲':e.momentum==='down'?'▼':'━'}</span></div>`).join('')}
         </div>
       </div>
       <div class="pulse-card">
         <div class="pulse-label">Dominant Narratives</div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-          ${narratives.map((n,i)=>`
-          <div class="hook-item" style="cursor:default">
-            <div class="hook-arrow" style="color:var(--amber)">${i+1}.</div>
-            <div class="hook-text" style="font-size:13px">${n}</div>
-          </div>`).join('')}
+          ${narratives.map((n,i)=>`<div class="hook-item" style="cursor:default"><div class="hook-arrow" style="color:var(--amber)">${i+1}.</div><div class="hook-text" style="font-size:12.5px">${n}</div></div>`).join('')}
         </div>
       </div>
     </div>
-    ${p.marketContext?`<div class="pulse-card" style="margin-bottom:16px"><div class="pulse-label">Market Context</div><p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-top:4px">${p.marketContext}</p></div>`:''}
+    ${p.marketContext?`<div class="pulse-card" style="margin-bottom:14px"><div class="pulse-label">Market Context</div><p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-top:4px">${p.marketContext}</p></div>`:''}
     ${p.weeklyInsight?`<div class="pulse-card" style="border-color:rgba(0,255,163,0.2);background:linear-gradient(135deg,var(--surface),var(--green-dim))"><div class="pulse-label" style="color:var(--green)">💡 Weekly Insight</div><p style="font-size:13.5px;color:var(--text);line-height:1.7;margin-top:6px;font-style:italic">${p.weeklyInsight}</p></div>`:''}
   </div>`;
 }
@@ -1479,23 +873,26 @@ function renderDeepDive(r, topic) {
   const players=r.keyPlayers||[], developments=r.recentDevelopments||[], onchain=r.onChainSignals||[], opps=r.contentOpportunities||[], sources=r.sources||[];
   out.innerHTML = `
   <div class="research-panel fade-in">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
-      <div style="flex:1">
-        <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--green);margin-bottom:4px">DEEP DIVE RESEARCH</div>
-        <div style="font-family:var(--display);font-weight:800;font-size:17px">${topic}</div>
-      </div>
+    <div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--green);margin-bottom:4px">DEEP DIVE RESEARCH</div>
+      <div style="font-family:var(--display);font-weight:800;font-size:18px">${topic}</div>
     </div>
     <div class="research-section"><div class="research-label">Overview</div><p class="research-text">${r.overview||'—'}</p></div>
     ${players.length?`<div class="research-section"><div class="research-label">Key Players</div>${players.map(kp=>`<div class="key-player"><div class="player-dot"></div><div><div class="player-name">${kp.name||''}</div><div class="player-role">${kp.role||''}</div></div></div>`).join('')}</div>`:''}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)">
       ${r.bullCase?`<div><div class="research-label" style="color:var(--green)">🟢 Bull Case</div><p class="research-text">${r.bullCase}</p></div>`:''}
       ${r.bearCase?`<div><div class="research-label" style="color:var(--red)">🔴 Bear Case</div><p class="research-text">${r.bearCase}</p></div>`:''}
     </div>
     ${developments.length?`<div class="research-section"><div class="research-label">Recent Developments</div>${developments.map(d=>`<div class="hook-item" style="cursor:default;margin-bottom:6px"><div class="hook-arrow">→</div><div class="hook-text" style="font-size:12.5px">${d}</div></div>`).join('')}</div>`:''}
     ${onchain.length?`<div class="research-section"><div class="research-label">On-Chain Signals</div>${onchain.map(s=>`<div style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:6px;font-size:12.5px;color:var(--text-dim)">${s}</div>`).join('')}</div>`:''}
     ${opps.length?`<div class="research-section"><div class="research-label" style="color:var(--amber)">💡 Content Opportunities</div>${opps.map(o=>`<div class="hook-item" style="margin-bottom:6px"><div class="hook-arrow" style="color:var(--amber)">✦</div><div class="hook-text" style="font-size:12.5px">${o}</div></div>`).join('')}</div>`:''}
-    ${sources.length?`<div><div class="research-label">Sources</div><div style="display:flex;flex-wrap:wrap;gap:6px">${sources.map(s=>`<span class="signal-tag" style="font-size:11px">${s}</span>`).join('')}</div></div>`:''}
+    ${sources.length?`<div><div class="research-label">Sources</div><div style="display:flex;flex-wrap:wrap;gap:6px">${sources.map(s=>`<span class="tag">${s}</span>`).join('')}</div></div>`:''}
   </div>`;
+}
+
+function toggleFaq(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
 }
 
 function setLoading(id) {
@@ -1505,13 +902,12 @@ function setLoading(id) {
 
 function showError(id, msg) {
   const el = document.getElementById(id);
-  if (el) el.innerHTML = `<div class="error-msg">⚠ ${msg}<br><small style="opacity:0.7">Make sure the backend is running on port 3001</small></div>`;
+  if (el) el.innerHTML = `<div class="error-msg">⚠ ${msg}<br><small style="opacity:0.7;font-size:11px">Make sure the backend is running on port 3001</small></div>`;
 }
 
 function updateTimestamp() {
-  const ts = state.lastScan;
-  if (!ts) return;
-  document.getElementById('top-timestamp').textContent = `Last scan: ${ts.toLocaleTimeString()}`;
+  if (!state.lastScan) return;
+  document.getElementById('top-timestamp').textContent = `Last scan: ${state.lastScan.toLocaleTimeString()}`;
 }
 
 function switchTab(e, tabId) {
@@ -1541,7 +937,7 @@ function openTrendDetail(id) {
   const trend = state.trends.find(t => t.id === id);
   if (!trend) return;
   document.querySelector('.nav-item:nth-child(4)').click();
-  setTimeout(() => generateContentIdeas(trend), 100);
+  setTimeout(() => generateContentIdeas(trend), 150);
 }
 
 loadTrends();
